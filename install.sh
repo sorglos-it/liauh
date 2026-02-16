@@ -14,14 +14,24 @@ if ! sudo apt-get install -y git; then
     exit 1
 fi
 
-echo "📥 Cloning LIAUH..."
-if ! cd ~ && git clone https://github.com/sorglos-it/liauh.git; then
-    echo "❌ Failed to clone LIAUH"
-    exit 1
+echo "📥 Setting up LIAUH..."
+cd ~
+
+# Check if liauh directory already exists
+if [[ -d "liauh" ]]; then
+    echo "  (liauh directory exists, pulling latest updates...)"
+    cd liauh
+    git pull origin main 2>/dev/null || git pull origin master 2>/dev/null || true
+else
+    echo "  Cloning from GitHub..."
+    if ! git clone https://github.com/sorglos-it/liauh.git; then
+        echo "❌ Failed to clone LIAUH"
+        exit 1
+    fi
+    cd liauh
 fi
 
 echo "🚀 Starting LIAUH..."
-cd liauh
 bash liauh.sh
 
 
