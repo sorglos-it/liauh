@@ -40,17 +40,12 @@ case "$ACTION" in
         
         log_info "Fetching CA certificate from $SERVER..."
         
-        # Download certificate
-        if ! echo | openssl s_client -connect "$SERVER:443" -showcerts 2>/dev/null | openssl x509 -outform PEM > /home/ca.crt; then
-            log_error "Failed to fetch certificate from $SERVER"
+        # Download and install certificate directly to CA store
+        if ! echo | openssl s_client -connect "$SERVER:443" -showcerts 2>/dev/null | openssl x509 -outform PEM | sudo tee /usr/local/share/ca-certificates/ca-$SERVER.crt > /dev/null; then
+            log_error "Failed to fetch and install certificate from $SERVER"
         fi
         
-        log_info "Certificate downloaded to /home/ca.crt"
-        
-        log_info "Installing certificate to system CA store..."
-        if ! sudo cp /home/ca.crt /usr/local/share/ca-certificates/ca-$SERVER.crt; then
-            log_error "Failed to copy certificate to CA store"
-        fi
+        log_info "Certificate installed to system CA store"
         
         log_info "Updating CA certificate database..."
         if ! sudo update-ca-certificates; then
