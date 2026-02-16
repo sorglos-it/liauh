@@ -4,17 +4,27 @@
 # ============================================================================
 
 scripts:
-  ubuntu-update:
-    description: "Update Ubuntu system (handles 25.04 → 25.10 upgrades)"
+  ubuntu:
+    description: "Ubuntu system management (updates & Pro)"
     category: "System Updates"
-    file: "ubuntu-update.sh"
+    file: "ubuntu.sh"
     needs_sudo: true
     os_only: ubuntu
     
     actions:
       - name: "update"
         parameter: "update"
+        description: "Update system (handles 25.04 → 25.10 upgrades)"
         prompts: []
+      
+      - name: "ubuntu-pro"
+        parameter: "pro"
+        description: "Attach Ubuntu Pro subscription"
+        prompts:
+          - question: "Ubuntu Pro subscription token?"
+            variable: "KEY"
+            type: "text"
+            default: ""
 
   ca-cert-update:
     description: "Install CA certificate from a server"
@@ -33,19 +43,3 @@ scripts:
             variable: "SERVER"
             type: "text"
             default: "cert.my.lan"
-
-  ubuntu-pro:
-    description: "Attach Ubuntu Pro subscription"
-    category: "System Updates"
-    file: "ubuntu-pro.sh"
-    needs_sudo: true
-    os_only: ubuntu
-    
-    actions:
-      - name: "attach"
-        parameter: "attach"
-        prompts:
-          - question: "Ubuntu Pro subscription token?"
-            variable: "KEY"
-            type: "text"
-            default: ""

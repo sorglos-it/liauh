@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Ubuntu Pro Subscription Script
-# Attaches Ubuntu Pro subscription to the system
+# Ubuntu Management Script
+# Handles system updates and Ubuntu Pro subscription management
 
 set -e
 
@@ -35,7 +35,30 @@ log_error() {
 }
 
 case "$ACTION" in
-    attach)
+    update)
+        log_info "Starting Ubuntu system update..."
+        
+        log_info "Step 1: Update package lists..."
+        sudo apt-get update || log_error "Failed to update package lists"
+        
+        log_info "Step 2: Reinstalling gnupg..."
+        sudo apt-get install --reinstall gnupg -y || log_error "Failed to reinstall gnupg"
+        
+        log_info "Step 3: Upgrading packages..."
+        sudo apt-get upgrade -y || log_error "Failed to upgrade packages"
+        
+        log_info "Step 4: Starting distribution upgrade..."
+        log_warn "This may take several minutes. Press 'y' when prompted."
+        sudo DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y || log_error "Failed to upgrade distribution"
+        
+        log_info "Step 5: Performing release upgrade..."
+        sudo do-release-upgrade -f DistUpgradeViewNonInteractive || log_error "Failed to perform release upgrade"
+        
+        log_info "Ubuntu update completed successfully!"
+        log_warn "You may need to restart your system: sudo reboot"
+        ;;
+    
+    pro)
         [[ -z "$KEY" ]] && log_error "KEY variable not set"
         
         log_info "Updating package lists..."
@@ -59,7 +82,9 @@ case "$ACTION" in
     
     *)
         log_error "Unknown action: $ACTION"
-        echo "Usage: ubuntu-pro.sh attach,KEY=your-token"
+        echo "Usage:"
+        echo "  ubuntu.sh update                (system update)"
+        echo "  ubuntu.sh pro,KEY=your-token    (attach Pro subscription)"
         exit 1
         ;;
 esac
