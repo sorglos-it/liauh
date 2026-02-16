@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Compression Tools Script
-# Installs zip and unzip on all platforms
+# Installs/uninstalls zip and unzip on all platforms
 
 set -e
 
@@ -52,83 +52,85 @@ detect_package_manager() {
     fi
 }
 
-install_package() {
-    local pkg="$1"
+install_packages() {
     local pm=$(detect_package_manager)
+    
+    log_info "Installing zip and unzip..."
     
     case "$pm" in
         apt)
             sudo apt-get update >/dev/null 2>&1
-            sudo apt-get install -y "$pkg" || log_error "Failed to install $pkg with apt"
+            sudo apt-get install -y zip unzip || log_error "Failed to install packages with apt"
             ;;
         dnf)
-            sudo dnf install -y "$pkg" || log_error "Failed to install $pkg with dnf"
+            sudo dnf install -y zip unzip || log_error "Failed to install packages with dnf"
             ;;
         yum)
-            sudo yum install -y "$pkg" || log_error "Failed to install $pkg with yum"
+            sudo yum install -y zip unzip || log_error "Failed to install packages with yum"
             ;;
         pacman)
-            sudo pacman -S --noconfirm "$pkg" || log_error "Failed to install $pkg with pacman"
+            sudo pacman -S --noconfirm zip unzip || log_error "Failed to install packages with pacman"
             ;;
         zypper)
-            sudo zypper install -y "$pkg" || log_error "Failed to install $pkg with zypper"
+            sudo zypper install -y zip unzip || log_error "Failed to install packages with zypper"
             ;;
         apk)
-            sudo apk add "$pkg" || log_error "Failed to install $pkg with apk"
+            sudo apk add zip unzip || log_error "Failed to install packages with apk"
             ;;
         *)
             log_error "Unknown package manager: $pm"
             ;;
     esac
+    
+    log_info "zip and unzip installed successfully!"
+}
+
+uninstall_packages() {
+    local pm=$(detect_package_manager)
+    
+    log_info "Uninstalling zip and unzip..."
+    
+    case "$pm" in
+        apt)
+            sudo apt-get remove -y zip unzip || log_error "Failed to uninstall packages with apt"
+            ;;
+        dnf)
+            sudo dnf remove -y zip unzip || log_error "Failed to uninstall packages with dnf"
+            ;;
+        yum)
+            sudo yum remove -y zip unzip || log_error "Failed to uninstall packages with yum"
+            ;;
+        pacman)
+            sudo pacman -R --noconfirm zip unzip || log_error "Failed to uninstall packages with pacman"
+            ;;
+        zypper)
+            sudo zypper remove -y zip unzip || log_error "Failed to uninstall packages with zypper"
+            ;;
+        apk)
+            sudo apk del zip unzip || log_error "Failed to uninstall packages with apk"
+            ;;
+        *)
+            log_error "Unknown package manager: $pm"
+            ;;
+    esac
+    
+    log_info "zip and unzip uninstalled successfully!"
 }
 
 case "$ACTION" in
-    zip)
-        log_info "Installing zip..."
-        if command -v zip &>/dev/null; then
-            log_warn "zip is already installed"
-        else
-            install_package "zip"
-            log_info "zip installed successfully!"
-        fi
+    install)
+        install_packages
         ;;
     
-    unzip)
-        log_info "Installing unzip..."
-        if command -v unzip &>/dev/null; then
-            log_warn "unzip is already installed"
-        else
-            install_package "unzip"
-            log_info "unzip installed successfully!"
-        fi
-        ;;
-    
-    both)
-        log_info "Installing zip and unzip..."
-        
-        if ! command -v zip &>/dev/null; then
-            install_package "zip"
-            log_info "zip installed"
-        else
-            log_warn "zip is already installed"
-        fi
-        
-        if ! command -v unzip &>/dev/null; then
-            install_package "unzip"
-            log_info "unzip installed"
-        else
-            log_warn "unzip is already installed"
-        fi
-        
-        log_info "zip and unzip are ready to use!"
+    uninstall)
+        uninstall_packages
         ;;
     
     *)
         log_error "Unknown action: $ACTION"
         echo "Usage:"
-        echo "  compression.sh zip      (install zip)"
-        echo "  compression.sh unzip    (install unzip)"
-        echo "  compression.sh both     (install both)"
+        echo "  compression.sh install     (install zip and unzip)"
+        echo "  compression.sh uninstall   (uninstall zip and unzip)"
         exit 1
         ;;
 esac
