@@ -1,0 +1,16 @@
+# Custom user scripts and configuration
+custom/
+custom.yaml
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Node modules (if ever needed)
+node_modules/

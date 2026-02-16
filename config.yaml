@@ -1,0 +1,44 @@
+# ============================================================================
+# LIAUH Configuration - System Scripts
+# Path prefix: scripts/
+# ============================================================================
+
+scripts:
+  apache2:
+    description: "Apache2 web server"
+    category: "muh"
+    file: "test_script.sh"
+    needs_sudo: false
+
+    os_family: debian
+    os_exclude:
+      - raspbian
+
+    actions:
+      - name: "install"
+        parameter: "install"
+        prompts:
+          - question: "Domain name?"
+            variable: "DOMAIN"
+            type: "text"
+            default: "localhost"
+          - question: "Enable SSL?"
+            variable: "SSL_ENABLED"
+            type: "yes/no"
+            default: "no"
+          - question: "SSL Certificate email?"
+            variable: "SSL_EMAIL"
+            type: "text"
+            default: "admin@localhost"
+
+      - name: "remove"
+        parameter: "remove"
+        prompts:
+          - question: "Keep config files?"
+            variable: "KEEP_CONFIG"
+            type: "yes/no"
+            default: "yes"
+          - question: "Remove log files?"
+            variable: "REMOVE_LOGS"
+            type: "yes/no"
+            default: "no"
