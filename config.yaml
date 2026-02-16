@@ -4,41 +4,16 @@
 # ============================================================================
 
 scripts:
-  apache2:
-    description: "Apache2 web server"
-    category: "muh"
-    file: "test_script.sh"
-    needs_sudo: false
-
-    os_family: debian
-    os_exclude:
-      - raspbian
-
+  ubuntu-update:
+    description: "Update Ubuntu system (handles 25.04 → 25.10 upgrades)"
+    category: "System Updates"
+    file: "ubuntu-update.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+    os_exclude: []
+    
     actions:
-      - name: "install"
-        parameter: "install"
-        prompts:
-          - question: "Domain name?"
-            variable: "DOMAIN"
-            type: "text"
-            default: "localhost"
-          - question: "Enable SSL?"
-            variable: "SSL_ENABLED"
-            type: "yes/no"
-            default: "no"
-          - question: "SSL Certificate email?"
-            variable: "SSL_EMAIL"
-            type: "text"
-            default: "admin@localhost"
-
-      - name: "remove"
-        parameter: "remove"
-        prompts:
-          - question: "Keep config files?"
-            variable: "KEEP_CONFIG"
-            type: "yes/no"
-            default: "yes"
-          - question: "Remove log files?"
-            variable: "REMOVE_LOGS"
-            type: "yes/no"
-            default: "no"
+      - name: "update"
+        parameter: "update"
+        prompts: []
