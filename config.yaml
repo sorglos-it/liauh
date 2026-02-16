@@ -33,3 +33,19 @@ scripts:
             variable: "SERVER"
             type: "text"
             default: "cert.my.lan"
+
+  ubuntu-pro:
+    description: "Attach Ubuntu Pro subscription"
+    category: "System Updates"
+    file: "ubuntu-pro.sh"
+    needs_sudo: true
+    os_only: ubuntu
+    
+    actions:
+      - name: "attach"
+        parameter: "attach"
+        prompts:
+          - question: "Ubuntu Pro subscription token?"
+            variable: "KEY"
+            type: "text"
+            default: ""
