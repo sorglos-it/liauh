@@ -4,10 +4,25 @@
 menu_clear() { clear; printf '\033[H\033[2J\033[3J'; }
 
 menu_header() {
-    local title="$1" w=76 tlen=${#1} pad=$(( (76 - ${#1} - 2) / 2 ))
-    echo "+$(printf "%${w}s" | tr ' ' '=')+"
-    printf "|%*s%s%*s|\n" $pad "" "$title" $((w - pad - tlen)) ""
-    echo "+$(printf "%${w}s" | tr ' ' '=')+"
+    local title="$1" version="${2:-}"
+    local w=76
+    local border=$(printf "%${w}s" | tr ' ' '=')
+    
+    echo "+${border}+"
+    
+    if [[ -n "$version" ]]; then
+        local version_str="VERSION: ${version}"
+        local vlen=${#version_str}
+        local tlen=${#title}
+        local padding=$(( w - tlen - vlen - 2 ))
+        printf "|%s%*s%s|\n" "$title" $padding "" "$version_str"
+    else
+        local tlen=${#title}
+        local pad=$(( (w - tlen) / 2 ))
+        printf "|%*s%s%*s|\n" $pad "" "$title" $((w - pad - tlen)) ""
+    fi
+    
+    echo "+${border}+"
     echo ""
 }
 
@@ -58,8 +73,8 @@ _has_custom_scripts() {
 }
 
 menu_show_main() {
-    menu_clear; menu_header "LIAUH - Linux Install and Update Helper"
-    echo "  Version: ${VERSION} | Detected: ${OS_DISTRO} (${OS_FAMILY}) - ${OS_VERSION}"; echo ""
+    menu_clear; menu_header "LIAUH - Linux Install and Update Helper" "${VERSION}"
+    echo "  Detected: ${OS_DISTRO} (${OS_FAMILY}) - ${OS_VERSION}"; echo ""
     local -a cats; _get_categories cats
     local i=1; for c in "${cats[@]}"; do printf "  %2d) %s\n" $i "$c"; ((i++)); done
     if _has_custom_scripts; then echo ""; echo "   c) Custom scripts"; fi
