@@ -75,6 +75,7 @@ install_packages() {
             sudo zypper install -y zip unzip || log_error "Failed to install packages with zypper"
             ;;
         apk)
+            sudo apk update >/dev/null 2>&1
             sudo apk add zip unzip || log_error "Failed to install packages with apk"
             ;;
         *)

@@ -98,7 +98,6 @@ install_mariadb() {
     
     log_info "MariaDB installed and configured successfully!"
     log_info "Root password: ${ROOT_PASSWORD:-(empty - insecure!)}"
-    ;;
 }
 
 update_mariadb() {
@@ -240,10 +239,10 @@ case "$ACTION" in
     *)
         log_error "Unknown action: $ACTION"
         echo "Usage:"
-        echo "  mariadb.sh install                              (install MariaDB)"
-        echo "  mariadb.sh update                               (update MariaDB)"
-        echo "  mariadb.sh uninstall,DELETE_DATA=yes/no         (uninstall MariaDB)"
-        echo "  mariadb.sh config,MAX_CONNECTIONS=100,..."      (configure MariaDB)"
+        echo "  mariadb.sh install"
+        echo "  mariadb.sh update"
+        echo "  mariadb.sh uninstall,DELETE_DATA=yes/no"
+        echo "  mariadb.sh config,MAX_CONNECTIONS=100,..."
         exit 1
         ;;
 esac

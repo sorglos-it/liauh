@@ -4,6 +4,19 @@
 # ============================================================================
 
 scripts:
+  debian:
+    description: "Debian system update"
+    category: "System Updates"
+    file: "debian.sh"
+    needs_sudo: true
+    os_only: debian
+    
+    actions:
+      - name: "update"
+        parameter: "update"
+        description: "Update Debian system to latest version"
+        prompts: []
+
   ubuntu:
     description: "Ubuntu system management (updates & Pro)"
     category: "System Updates"
@@ -133,3 +146,591 @@ scripts:
             variable: "CHARSET"
             type: "text"
             default: "utf8mb4"
+
+  docker:
+    description: "Docker container platform management"
+    category: "Tools"
+    file: "docker.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Docker"
+        prompts: []
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Docker"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Docker"
+        prompts:
+          - question: "Delete Docker images?"
+            variable: "DELETE_IMAGES"
+            type: "yes/no"
+            default: "no"
+          
+          - question: "Delete Docker volumes?"
+            variable: "DELETE_VOLUMES"
+            type: "yes/no"
+            default: "no"
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure Docker daemon"
+        prompts:
+          - question: "Storage driver? (e.g., overlay2, btrfs - leave empty for default)"
+            variable: "STORAGE_DRIVER"
+            type: "text"
+            default: ""
+          
+          - question: "Log driver? (e.g., json-file, syslog - leave empty for default)"
+            variable: "LOG_DRIVER"
+            type: "text"
+            default: ""
+          
+          - question: "Registry mirror URL? (leave empty for none)"
+            variable: "REGISTRY_MIRROR"
+            type: "text"
+            default: ""
+          
+          - question: "Max concurrent downloads? (leave empty for default)"
+            variable: "MAX_CONCURRENT_DOWNLOADS"
+            type: "number"
+            default: ""
+
+  apache:
+    description: "Apache web server management"
+    category: "Webserver"
+    file: "apache.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Apache"
+        prompts: []
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Apache"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Apache"
+        prompts:
+          - question: "Delete configuration files?"
+            variable: "DELETE_CONFIG"
+            type: "yes/no"
+            default: "no"
+      
+      - name: "vhosts"
+        parameter: "vhosts"
+        description: "Configure Virtual Hosts"
+        prompts:
+          - question: "Virtual host name? (e.g., example.com)"
+            variable: "VHOST_NAME"
+            type: "text"
+            default: "example.com"
+          
+          - question: "Document root? (e.g., /var/www/example)"
+            variable: "VHOST_ROOT"
+            type: "text"
+            default: "/var/www/example"
+      
+      - name: "default"
+        parameter: "default"
+        description: "Configure default settings"
+        prompts:
+          - question: "Server admin email? (e.g., admin@example.com)"
+            variable: "SERVER_ADMIN"
+            type: "text"
+            default: "admin@localhost"
+          
+          - question: "Modules to enable? (comma-separated: rewrite,ssl,proxy)"
+            variable: "ENABLE_MODULES"
+            type: "text"
+            default: ""
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure performance and logging"
+        prompts:
+          - question: "Max request workers? (leave empty for default)"
+            variable: "MAX_REQUESTS"
+            type: "number"
+            default: ""
+          
+          - question: "Log level? (debug, info, notice, warn, error, crit, alert, emerg)"
+            variable: "LOG_LEVEL"
+            type: "text"
+            default: "warn"
+
+  nginx:
+    description: "Nginx web server management"
+    category: "Webserver"
+    file: "nginx.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Nginx"
+        prompts: []
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Nginx"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Nginx"
+        prompts:
+          - question: "Delete configuration files?"
+            variable: "DELETE_CONFIG"
+            type: "yes/no"
+            default: "no"
+      
+      - name: "vhosts"
+        parameter: "vhosts"
+        description: "Configure Server Block (Virtual Host)"
+        prompts:
+          - question: "Server name? (e.g., example.com)"
+            variable: "SERVER_NAME"
+            type: "text"
+            default: "example.com"
+          
+          - question: "Root path? (e.g., /var/www/example)"
+            variable: "ROOT_PATH"
+            type: "text"
+            default: "/var/www/example"
+      
+      - name: "default"
+        parameter: "default"
+        description: "Configure default settings"
+        prompts:
+          - question: "Enable gzip compression?"
+            variable: "ENABLE_GZIP"
+            type: "yes/no"
+            default: "yes"
+          
+          - question: "Client max body size? (e.g., 100M - leave empty for default)"
+            variable: "CLIENT_MAX_BODY"
+            type: "text"
+            default: ""
+          
+          - question: "Hide Nginx version?"
+            variable: "HIDE_VERSION"
+            type: "yes/no"
+            default: "yes"
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure performance and logging"
+        prompts:
+          - question: "Worker processes? (leave empty for auto)"
+            variable: "WORKER_PROCESSES"
+            type: "number"
+            default: ""
+          
+          - question: "Worker connections per process? (leave empty for default)"
+            variable: "WORKER_CONNECTIONS"
+            type: "number"
+            default: ""
+          
+          - question: "Error log level? (debug, info, warn, error, crit, alert, emerg)"
+            variable: "LOG_LEVEL"
+            type: "text"
+            default: "warn"
+
+  portainer:
+    description: "Portainer Docker management UI (Main/Server)"
+    category: "Tools"
+    file: "portainer.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Portainer Main"
+        prompts:
+          - question: "Edge Agent port? (default: 8000)"
+            variable: "EDGE_PORT"
+            type: "number"
+            default: "8000"
+          
+          - question: "Web UI port? (default: 9000)"
+            variable: "WEB_PORT"
+            type: "number"
+            default: "9000"
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Portainer"
+        prompts:
+          - question: "Edge Agent port? (default: 8000)"
+            variable: "EDGE_PORT"
+            type: "number"
+            default: "8000"
+          
+          - question: "Web UI port? (default: 9000)"
+            variable: "WEB_PORT"
+            type: "number"
+            default: "9000"
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Portainer"
+        prompts:
+          - question: "Delete Portainer data?"
+            variable: "DELETE_DATA"
+            type: "yes/no"
+            default: "no"
+
+  portainer-client:
+    description: "Portainer Agent (Client/Edge)"
+    category: "Tools"
+    file: "portainer-client.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Portainer Agent"
+        prompts:
+          - question: "Agent port? (default: 9001)"
+            variable: "AGENT_PORT"
+            type: "number"
+            default: "9001"
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Portainer Agent"
+        prompts:
+          - question: "Agent port? (default: 9001)"
+            variable: "AGENT_PORT"
+            type: "number"
+            default: "9001"
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Portainer Agent"
+        prompts:
+          - question: "Delete agent data?"
+            variable: "DELETE_DATA"
+            type: "yes/no"
+            default: "no"
+
+  linux:
+    description: "Linux system configuration"
+    category: "System"
+    file: "linux.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    os_exclude:
+      - proxmox
+    
+    actions:
+      - name: "network"
+        parameter: "network"
+        description: "Configure network (DHCP or Static IP)"
+        prompts:
+          - question: "Network interface? (e.g., eth0, ens0)"
+            variable: "INTERFACE"
+            type: "text"
+            default: "eth0"
+          
+          - question: "Use DHCP?"
+            variable: "DHCP_MODE"
+            type: "yes/no"
+            default: "yes"
+          
+          - question: "IPv4 address and netmask? (e.g., 192.168.1.100/24 - only for static)"
+            variable: "IP_ADDRESS"
+            type: "text"
+            default: ""
+          
+          - question: "IPv4 gateway? (only for static)"
+            variable: "GATEWAY"
+            type: "text"
+            default: ""
+          
+          - question: "IPv6 address and prefix? (e.g., fd00::100/64 - optional)"
+            variable: "IPV6_ADDRESS"
+            type: "text"
+            default: ""
+          
+          - question: "IPv6 gateway? (optional)"
+            variable: "IPV6_GATEWAY"
+            type: "text"
+            default: ""
+          
+          - question: "DNS server?"
+            variable: "DNS_SERVER"
+            type: "text"
+            default: "8.8.8.8"
+      
+      - name: "dns"
+        parameter: "dns"
+        description: "Configure DNS server"
+        prompts:
+          - question: "DNS server address?"
+            variable: "DNS_SERVER"
+            type: "text"
+            default: "8.8.8.8"
+      
+      - name: "hostname"
+        parameter: "hostname"
+        description: "Change system hostname"
+        prompts:
+          - question: "New hostname?"
+            variable: "HOSTNAME"
+            type: "text"
+            default: "linux-host"
+      
+      - name: "user-add"
+        parameter: "user-add"
+        description: "Add new user"
+        prompts:
+          - question: "Username?"
+            variable: "USERNAME"
+            type: "text"
+            default: ""
+          
+          - question: "Shell? (e.g., /bin/bash, /bin/zsh)"
+            variable: "SHELL"
+            type: "text"
+            default: "/bin/bash"
+      
+      - name: "user-delete"
+        parameter: "user-delete"
+        description: "Delete user"
+        prompts:
+          - question: "Username to delete?"
+            variable: "USERNAME"
+            type: "text"
+            default: ""
+      
+      - name: "user-password"
+        parameter: "user-password"
+        description: "Change user password"
+        prompts:
+          - question: "Username?"
+            variable: "USERNAME"
+            type: "text"
+            default: ""
+          
+          - question: "New password?"
+            variable: "PASSWORD"
+            type: "text"
+            default: ""
+      
+      - name: "group-create"
+        parameter: "group-create"
+        description: "Create new group"
+        prompts:
+          - question: "Group name?"
+            variable: "GROUPNAME"
+            type: "text"
+            default: ""
+      
+      - name: "user-to-group"
+        parameter: "user-to-group"
+        description: "Add user to group"
+        prompts:
+          - question: "Username?"
+            variable: "USERNAME"
+            type: "text"
+            default: ""
+          
+          - question: "Group name?"
+            variable: "GROUPNAME"
+            type: "text"
+            default: ""
+
+  proxmox:
+    description: "Proxmox VE management"
+    category: "System"
+    file: "proxmox.sh"
+    needs_sudo: true
+    os_only: proxmox
+    
+    actions:
+      - name: "stop-all"
+        parameter: "stop-all"
+        description: "Stop all VMs and LXC containers"
+        prompts: []
+      
+      - name: "language"
+        parameter: "language"
+        description: "Change system language"
+        prompts:
+          - question: "Language? (e.g., de_DE, en_US, en_GB, fr_FR, es_ES, it_IT)"
+            variable: "LANGUAGE"
+            type: "text"
+            default: "de_DE"
+      
+      - name: "qemu-guest-agent"
+        parameter: "qemu-guest-agent"
+        description: "Install QEMU Guest Agent"
+        prompts: []
+      
+      - name: "lxc-ssh-root"
+        parameter: "lxc-ssh-root"
+        description: "Enable SSH root login for LXC (Ubuntu)"
+        prompts: []
+      
+      - name: "lxc-to-template"
+        parameter: "lxc-to-template"
+        description: "Convert LXC container to template"
+        prompts:
+          - question: "Container ID (CTID)?"
+            variable: "CTID"
+            type: "number"
+            default: ""
+      
+      - name: "template-to-lxc"
+        parameter: "template-to-lxc"
+        description: "Convert template to LXC container"
+        prompts:
+          - question: "Container ID (CTID)?"
+            variable: "CTID"
+            type: "number"
+            default: ""
+
+  pikvm-v3:
+    description: "PiKVM v3 management"
+    category: "System Updates"
+    file: "pikvm-v3.sh"
+    needs_sudo: true
+    os_only: arch
+    
+    actions:
+      - name: "update"
+        parameter: "update"
+        description: "Update PiKVM v3 system"
+        prompts: []
+      
+      - name: "mount-iso"
+        parameter: "mount-iso"
+        description: "Mount ISO directory (rw, create symlink)"
+        prompts: []
+      
+      - name: "dismount-iso"
+        parameter: "dismount-iso"
+        description: "Dismount ISO directory (ro)"
+        prompts: []
+      
+      - name: "oled-enable"
+        parameter: "oled-enable"
+        description: "Enable OLED display"
+        prompts: []
+      
+      - name: "vnc-enable"
+        parameter: "vnc-enable"
+        description: "Enable VNC (with DE keymap)"
+        prompts: []
+      
+      - name: "vnc-user"
+        parameter: "vnc-user"
+        description: "Set VNC user credentials"
+        prompts:
+          - question: "VNC username?"
+            variable: "VNC_USERNAME"
+            type: "text"
+            default: "admin"
+          
+          - question: "VNC password?"
+            variable: "VNC_PASSWORD"
+            type: "text"
+            default: "admin"
+      
+      - name: "hostname"
+        parameter: "hostname"
+        description: "Change hostname"
+        prompts:
+          - question: "New hostname? (e.g., pikvm.my.lan)"
+            variable: "HOSTNAME"
+            type: "text"
+            default: "pikvm.my.lan"
+      
+      - name: "rtc-enable"
+        parameter: "rtc-enable"
+        description: "Enable RTC (for Geekworm RTC module)"
+        prompts: []
+      
+      - name: "atx-disable"
+        parameter: "atx-disable"
+        description: "Disable ATX menu"
+        prompts: []
+      
+      - name: "create-usb-img"
+        parameter: "create-usb-img"
+        description: "Create USB stick IMG file"
+        prompts:
+          - question: "USB size in GB? (e.g., 16)"
+            variable: "USB_SIZE_GB"
+            type: "number"
+            default: "16"
+          
+          - question: "IMG filename? (e.g., usb_stick_16gb.img)"
+            variable: "USB_NAME"
+            type: "text"
+            default: "usb_stick_16gb.img"
+      
+      - name: "setup"
+        parameter: "setup"
+        description: "Setup SSL certificate from Step-CA"
+        prompts:
+          - question: "Step-CA server? (e.g., ca.my.lan)"
+            variable: "CA_SERVER"
+            type: "text"
+            default: "ca.my.lan"
+          
+          - question: "PiKVM domain? (e.g., pikvm.my.lan)"
+            variable: "PIKVM_DOMAIN"
+            type: "text"
+            default: "pikvm.my.lan"
+          
+          - question: "ACME server URL?"
+            variable: "ACME_SERVER"
+            type: "text"
+            default: "https://ca.my.lan/acme/acme/directory"
