@@ -636,6 +636,278 @@ scripts:
             type: "number"
             default: ""
 
+  nodejs:
+    description: "Node.js and npm management"
+    category: "Programming Languages"
+    file: "nodejs.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Node.js"
+        prompts:
+          - question: "Node.js version? (default: latest)"
+            variable: "VERSION"
+            type: "text"
+            default: "latest"
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Node.js"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Node.js"
+        prompts: []
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure Node.js/npm"
+        prompts:
+          - question: "npm prefix? (leave empty for default)"
+            variable: "NPM_PREFIX"
+            type: "text"
+            default: ""
+          
+          - question: "NODE_PATH? (leave empty for default)"
+            variable: "NODE_PATH"
+            type: "text"
+            default: ""
+
+  python:
+    description: "Python and pip management"
+    category: "Programming Languages"
+    file: "python.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Python"
+        prompts:
+          - question: "Python version? (default: 3)"
+            variable: "VERSION"
+            type: "text"
+            default: "3"
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Python"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Python"
+        prompts: []
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure Python/pip"
+        prompts:
+          - question: "Require virtualenv for pip?"
+            variable: "PIP_REQUIRE_VIRTUALENV"
+            type: "yes/no"
+            default: "no"
+          
+          - question: "PYTHONPATH? (leave empty for default)"
+            variable: "PYTHONPATH"
+            type: "text"
+            default: ""
+
+  ruby:
+    description: "Ruby and gem management"
+    category: "Programming Languages"
+    file: "ruby.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Ruby"
+        prompts:
+          - question: "Ruby version? (default: latest)"
+            variable: "VERSION"
+            type: "text"
+            default: "latest"
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Ruby"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Ruby"
+        prompts: []
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure Ruby/gem"
+        prompts:
+          - question: "GEM_HOME? (leave empty for default)"
+            variable: "GEM_HOME"
+            type: "text"
+            default: ""
+          
+          - question: "GEM_PATH? (leave empty for default)"
+            variable: "GEM_PATH"
+            type: "text"
+            default: ""
+
+  golang:
+    description: "Go programming language"
+    category: "Programming Languages"
+    file: "golang.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Go"
+        prompts: []
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Go"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Go"
+        prompts: []
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure Go"
+        prompts:
+          - question: "GOPATH? (leave empty for default)"
+            variable: "GOPATH"
+            type: "text"
+            default: ""
+          
+          - question: "GOROOT? (leave empty for default)"
+            variable: "GOROOT"
+            type: "text"
+            default: ""
+
+  php:
+    description: "PHP and composer management"
+    category: "Programming Languages"
+    file: "php.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install PHP"
+        prompts:
+          - question: "Install Composer?"
+            variable: "COMPOSER"
+            type: "yes/no"
+            default: "no"
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update PHP"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall PHP"
+        prompts: []
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure PHP"
+        prompts:
+          - question: "memory_limit? (e.g., 256M)"
+            variable: "MEMORY_LIMIT"
+            type: "text"
+            default: ""
+          
+          - question: "max_execution_time? (seconds)"
+            variable: "MAX_EXECUTION_TIME"
+            type: "text"
+            default: ""
+
+  perl:
+    description: "Perl and CPAN management"
+    category: "Programming Languages"
+    file: "perl.sh"
+    needs_sudo: true
+    os_family:
+      - debian
+      - redhat
+      - arch
+      - suse
+      - alpine
+    
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Perl"
+        prompts: []
+      
+      - name: "update"
+        parameter: "update"
+        description: "Update Perl"
+        prompts: []
+      
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Perl"
+        prompts: []
+      
+      - name: "cpan-module"
+        parameter: "cpan-module"
+        description: "Install CPAN module"
+        prompts:
+          - question: "CPAN module name? (e.g., LWP::UserAgent)"
+            variable: "MODULE"
+            type: "text"
+            default: ""
+      
+      - name: "config"
+        parameter: "config"
+        description: "Configure Perl"
+        prompts:
+          - question: "PERL5LIB? (leave empty for default)"
+            variable: "PERL5LIB"
+            type: "text"
+            default: ""
+
   pikvm-v3:
     description: "PiKVM v3 management"
     category: "System Updates"

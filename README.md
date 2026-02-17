@@ -154,6 +154,12 @@ Make sure `custom.yaml` is in the liauh directory and script path is correct.
 | **nginx** | Webserver | Debian, Red Hat, Arch, SUSE, Alpine | `install`, `update`, `uninstall`, `vhosts` (server blocks), `default` (gzip, client max body, hide version), `config` (worker processes, connections, logging) |
 | **portainer** | Tools | Debian, Red Hat, Arch, SUSE, Alpine | `install` (Docker UI), `update`, `uninstall` |
 | **portainer-client** | Tools | Debian, Red Hat, Arch, SUSE, Alpine | `install` (Agent/Edge), `update`, `uninstall` |
+| **nodejs** | Programming Languages | All | `install` (with version), `update`, `uninstall`, `config` |
+| **python** | Programming Languages | All | `install` (with version), `update`, `uninstall`, `config` |
+| **ruby** | Programming Languages | All | `install` (with version), `update`, `uninstall`, `config` |
+| **golang** | Programming Languages | All | `install`, `update`, `uninstall`, `config` |
+| **php** | Programming Languages | All | `install` (with Composer option), `update`, `uninstall`, `config` |
+| **perl** | Programming Languages | All | `install`, `update`, `uninstall`, `cpan-module`, `config` |
 
 **Legend:**
 - **Debian:** Ubuntu, Debian, Linux Mint, etc.
