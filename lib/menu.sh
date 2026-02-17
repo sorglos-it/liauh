@@ -31,7 +31,7 @@ menu_error() { echo ""; echo "  ❌ $1"; echo ""; read -rp "  Press Enter..."; }
 menu_confirm() { local r; read -rp "  $1 (y/N): " r; [[ "${r,,}" == "y" ]]; }
 menu_valid_num() { [[ "$1" =~ ^[0-9]+$ ]] && (( $1 >= 1 && $1 <= $2 )); }
 
-# Prompt helpers for action configuration
+# Prompt helpers
 menu_prompt_input() {
     local a; echo -n "  $1 [${2:-}]: "; read -r a
     [[ -z "$a" ]] && a="${2:-}"; echo "$a"
@@ -46,8 +46,10 @@ menu_prompt_yesno() {
     [[ "$a" =~ ^[yY] ]] && echo "yes" || echo "no"
 }
 
+separator() { echo "──────────────────────────────────────────────────────────────────────────────"; }
+
 # ============================================================================
-# Menu Screens
+# Helper Functions
 # ============================================================================
 
 _get_categories() {
@@ -73,14 +75,41 @@ _has_custom_scripts() {
     (( found == 1 ))
 }
 
-menu_show_main() {
+# ============================================================================
+# Menu Display Functions
+# ============================================================================
+
+menu_show_repositories() {
     menu_clear; menu_header "LIAUH - Linux Install and Update Helper" "${LIAUH_VERSION}"
     echo "  Detected: ${OS_DISTRO} (${OS_FAMILY}) - ${OS_VERSION}"; echo ""
-    local -a cats; _get_categories cats
-    local i=1; for c in "${cats[@]}"; do printf "  %2d) %s\n" $i "$c"; ((i++)); done
-    if _has_custom_scripts; then echo ""; echo "   c) Custom scripts"; fi
+    
+    local i=1
+    # Always show LIAUH system scripts
+    printf "  %2d) LIAUH Scripts\n" $i
+    ((i++))
+    
+    # Show enabled custom repositories
+    local repo_names
+    repo_names=$(repo_list_enabled "${LIAUH_DIR}")
+    while IFS= read -r repo_name; do
+        [[ -z "$repo_name" ]] && continue
+        local repo_display_name=$(repo_get_name "${LIAUH_DIR}/custom/repo.yaml" "$repo_name")
+        printf "  %2d) Custom: %s\n" $i "$repo_display_name"
+        ((i++))
+    done <<< "$repo_names"
+    
     echo ""
     separator; echo "   q) Quit"; separator
+}
+
+# Show LIAUH system scripts (categories)
+menu_show_main() {
+    menu_clear; menu_header "LIAUH - Linux Install and Update Helper" "${LIAUH_VERSION}"
+    echo "  System Scripts"; echo ""
+    local -a cats; _get_categories cats
+    local i=1; for c in "${cats[@]}"; do printf "  %2d) %s\n" $i "$c"; ((i++)); done
+    echo ""
+    separator; echo "  b) Back"; echo "  q) Quit"; separator
 }
 
 menu_show_category() {
@@ -102,13 +131,64 @@ menu_show_actions() {
     echo ""; separator; echo "  b) Back"; echo "  q) Quit"; separator
 }
 
-menu_show_custom() {
-    menu_clear; menu_header "Custom Scripts"
-    yaml_load "custom"
-    local -a scripts; _get_scripts scripts "$(yaml_scripts)"
-    if (( ${#scripts[@]} == 0 )); then echo "  No custom scripts."
-    else local i=1; for s in "${scripts[@]}"; do printf "  %2d) %-20s - %s\n" $i "$s" "$(yaml_info "$s" description)"; ((i++)); done; fi
-    yaml_load "config"
+# Show custom repo scripts
+menu_show_custom_repo() {
+    local repo_name="$1"
+    local repo_path="$2"
+    local repo_display_name=$(repo_get_name "${LIAUH_DIR}/custom/repo.yaml" "$repo_name")
+    
+    menu_clear; menu_header "Custom: $repo_display_name" "${LIAUH_VERSION}"
+    
+    # Load custom.yaml from repo
+    if [[ ! -f "$repo_path/custom.yaml" ]]; then
+        echo "  No custom.yaml found in $repo_path"
+        echo ""
+        separator; echo "  b) Back"; echo "  q) Quit"; separator
+        return 1
+    fi
+    
+    # Get scripts from this repo's custom.yaml
+    local -a scripts=()
+    while IFS= read -r script_name; do
+        [[ -n "$script_name" ]] && scripts+=("$script_name")
+    done <<< "$(yq eval ".scripts | keys | .[]" "$repo_path/custom.yaml" 2>/dev/null)"
+    
+    if (( ${#scripts[@]} == 0 )); then
+        echo "  No scripts available in this repository."
+    else
+        local i=1; for s in "${scripts[@]}"; do 
+            local desc=$(yq eval ".scripts.$s.description" "$repo_path/custom.yaml" 2>/dev/null)
+            printf "  %2d) %-20s - %s\n" $i "$s" "$desc"
+            ((i++))
+        done
+    fi
+    
+    echo ""
+    separator; echo "  b) Back"; echo "  q) Quit"; separator
+}
+
+menu_show_custom_repo_actions() {
+    local repo_name="$1"
+    local repo_path="$2"
+    local script_name="$3"
+    local repo_display_name=$(repo_get_name "${LIAUH_DIR}/custom/repo.yaml" "$repo_name")
+    
+    menu_clear; menu_header "Custom: $repo_display_name - $script_name" "${LIAUH_VERSION}"
+    
+    # Get actions from repo's custom.yaml
+    local count
+    count=$(yq eval ".scripts.$script_name.actions | length" "$repo_path/custom.yaml" 2>/dev/null)
+    [[ -z "$count" || "$count" == "null" ]] && count=0
+    
+    if (( count == 0 )); then 
+        echo "  No actions."
+    else 
+        for ((i=0; i<count; i++)); do
+            local n=$(yq eval ".scripts.$script_name.actions[$i].name" "$repo_path/custom.yaml" 2>/dev/null)
+            local d=$(yq eval ".scripts.$script_name.actions[$i].description" "$repo_path/custom.yaml" 2>/dev/null)
+            [[ -n "$d" && "$d" != "null" ]] && printf "  %2d) %-15s - %s\n" $((i+1)) "$n" "$d" || printf "  %2d) %s\n" $((i+1)) "$n"
+        done
+    fi
     echo ""; separator; echo "  b) Back"; echo "  q) Quit"; separator
 }
 
@@ -117,13 +197,62 @@ menu_show_custom() {
 # ============================================================================
 
 menu_main() {
+    # Check if there are custom repositories
+    local custom_repos
+    custom_repos=$(repo_list_enabled "${LIAUH_DIR}")
+    
+    if [[ -n "$custom_repos" ]]; then
+        # Show repository selector
+        menu_repositories
+    else
+        # Show LIAUH scripts directly (no repos)
+        menu_liauh_scripts
+    fi
+}
+
+menu_repositories() {
     while true; do
-        menu_show_main
-        local -a cats; _get_categories cats; local max=${#cats[@]}
+        menu_show_repositories
+        
+        # Count menu items: LIAUH + custom repos
+        local i=1
+        local -a choices=("liauh")  # First choice is LIAUH
+        ((i++))
+        
+        while IFS= read -r repo_name; do
+            [[ -z "$repo_name" ]] && continue
+            choices+=("$repo_name")
+            ((i++))
+        done <<< "$(repo_list_enabled "${LIAUH_DIR}")"
+        
+        local max=$((i-1))
+        
         echo ""; local input; read -rp "  Choose: " input || exit 0
         case "$input" in
             q|Q) echo "  Goodbye!"; exit 0 ;;
-            c|C) _has_custom_scripts && menu_custom || menu_error "No custom scripts available" ;;
+            [0-9]*)
+                if menu_valid_num "$input" $max; then
+                    local choice="${choices[$((input-1))]}"
+                    if [[ "$choice" == "liauh" ]]; then
+                        menu_liauh_scripts
+                    else
+                        local repo_path=$(repo_get_path "${LIAUH_DIR}/custom/repo.yaml" "$choice")
+                        menu_custom_repo_scripts "$choice" "$repo_path"
+                    fi
+                else menu_error "Invalid (1-$max)" ; fi ;;
+            "") ;; *) menu_error "Invalid input" ;;
+        esac
+    done
+}
+
+menu_liauh_scripts() {
+    while true; do
+        menu_show_main
+        local -a cats; _get_categories cats; local max=${#cats[@]}
+        echo ""; local input; read -rp "  Choose: " input || return
+        case "$input" in
+            q|Q) exit 0 ;;
+            b|B) return ;;
             [0-9]*) menu_valid_num "$input" $max && menu_category "${cats[$((input-1))]}" || menu_error "Invalid (1-$max)" ;;
             "") ;; *) menu_error "Invalid input" ;;
         esac
@@ -160,19 +289,54 @@ menu_actions() {
     done
 }
 
-menu_custom() {
+menu_custom_repo_scripts() {
+    local repo_name="$1"
+    local repo_path="$2"
+    
     while true; do
-        menu_show_custom
-        yaml_load "custom"
-        local -a scripts; _get_scripts scripts "$(yaml_scripts)"; local max=${#scripts[@]}
-        yaml_load "config"
+        menu_show_custom_repo "$repo_name" "$repo_path" || return
+        
+        # Get scripts from repo's custom.yaml
+        local -a scripts=()
+        while IFS= read -r script_name; do
+            [[ -n "$script_name" ]] && scripts+=("$script_name")
+        done <<< "$(yq eval ".scripts | keys | .[]" "$repo_path/custom.yaml" 2>/dev/null)"
+        
+        local max=${#scripts[@]}
         echo ""; local input; read -rp "  Choose: " input || return
         case "$input" in
-            q|Q) exit 0 ;; b|B) return ;;
+            q|Q) exit 0 ;;
+            b|B) return ;;
             [0-9]*)
-                if (( max > 0 )) && menu_valid_num "$input" $max; then
-                    yaml_load "custom"; menu_actions "${scripts[$((input-1))]}"; yaml_load "config"
-                else menu_error "Invalid"; fi ;;
+                if menu_valid_num "$input" $max; then
+                    menu_custom_repo_actions "$repo_name" "$repo_path" "${scripts[$((input-1))]}"
+                else menu_error "Invalid (1-$max)"; fi ;;
+            "") ;; *) menu_error "Invalid input" ;;
+        esac
+    done
+}
+
+menu_custom_repo_actions() {
+    local repo_name="$1"
+    local repo_path="$2"
+    local script_name="$3"
+    
+    while true; do
+        menu_show_custom_repo_actions "$repo_name" "$repo_path" "$script_name"
+        
+        # Get actions from repo's custom.yaml
+        local count
+        count=$(yq eval ".scripts.$script_name.actions | length" "$repo_path/custom.yaml" 2>/dev/null)
+        [[ -z "$count" || "$count" == "null" ]] && count=0
+        
+        echo ""; local input; read -rp "  Choose: " input || return
+        case "$input" in
+            q|Q) exit 0 ;;
+            b|B) return ;;
+            [0-9]*)
+                if (( count > 0 )) && menu_valid_num "$input" $count; then
+                    execute_custom_repo_action "$repo_name" "$repo_path" "$script_name" $((input-1))
+                else menu_error "Invalid (1-$count)"; fi ;;
             "") ;; *) menu_error "Invalid input" ;;
         esac
     done

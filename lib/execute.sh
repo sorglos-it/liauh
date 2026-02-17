@@ -112,3 +112,89 @@ execute_action() {
     read -rp "  Press Enter..."
     return $exit_code
 }
+
+# Execute action from custom repository
+# repo_name: repository ID, repo_path: path to cloned repo, script_name: script name, action_index: which action
+execute_custom_repo_action() {
+    local repo_name="$1"
+    local repo_path="$2"
+    local script_name="$3"
+    local action_index="$4"
+    
+    local custom_yaml="$repo_path/custom.yaml"
+    
+    [[ ! -f "$custom_yaml" ]] && { menu_error "custom.yaml not found in $repo_path"; return 1; }
+    
+    # Get script path from repo
+    local script_file=$(yq eval ".scripts.$script_name.path" "$custom_yaml" 2>/dev/null)
+    local script_path="$repo_path/$script_file"
+    
+    [[ ! -f "$script_path" ]] && { menu_error "Script not found: $script_path"; return 1; }
+    [[ ! -x "$script_path" ]] && chmod +x "$script_path" 2>/dev/null
+    
+    # Get action details
+    local aname=$(yq eval ".scripts.$script_name.actions[$action_index].name" "$custom_yaml" 2>/dev/null)
+    local parameter=$(yq eval ".scripts.$script_name.actions[$action_index].parameter" "$custom_yaml" 2>/dev/null)
+    local needs_sudo=$(yq eval ".scripts.$script_name.needs_sudo // false" "$custom_yaml" 2>/dev/null)
+    local prompt_count=$(yq eval ".scripts.$script_name.actions[$action_index].prompts | length" "$custom_yaml" 2>/dev/null)
+    [[ -z "$prompt_count" || "$prompt_count" == "null" ]] && prompt_count=0
+    
+    local -a answers=()
+    local -a varnames=()
+    
+    if (( prompt_count > 0 )); then
+        echo ""
+        separator
+        echo "  Configuration for: ${aname}"
+        separator
+        echo ""
+        
+        for ((i=0; i<prompt_count; i++)); do
+            local question=$(yq eval ".scripts.$script_name.actions[$action_index].prompts[$i].question" "$custom_yaml" 2>/dev/null)
+            local ptype=$(yq eval ".scripts.$script_name.actions[$action_index].prompts[$i].type" "$custom_yaml" 2>/dev/null)
+            local default=$(yq eval ".scripts.$script_name.actions[$action_index].prompts[$i].default" "$custom_yaml" 2>/dev/null)
+            local varname=$(yq eval ".scripts.$script_name.actions[$action_index].prompts[$i].variable" "$custom_yaml" 2>/dev/null)
+            
+            local answer=$(_prompt_by_type "$question" "$ptype" "$default")
+            
+            if [[ -n "$varname" && "$varname" != "null" ]]; then
+                varnames+=("$varname")
+            fi
+            answers+=("$answer")
+        done
+        echo ""
+    fi
+    
+    # Confirm before execution
+    menu_confirm "Execute '${aname}' now?" || {
+        return 1
+    }
+    
+    # Execute
+    echo ""
+    separator
+    echo "  Executing: ${script_name} → ${aname}"
+    separator
+    echo ""
+    
+    # Build comma-separated parameter string
+    local param_string="$parameter"
+    
+    for ((i=0; i<${#varnames[@]}; i++)); do
+        param_string+=",${varnames[$i]}=${answers[$i]}"
+    done
+    
+    local exit_code=0
+    if [[ "$needs_sudo" == "true" ]]; then
+        sudo bash "$script_path" "$param_string" || exit_code=$?
+    else
+        bash "$script_path" "$param_string" || exit_code=$?
+    fi
+    
+    echo ""
+    separator
+    (( exit_code == 0 )) && echo "  ✅ Completed successfully" || echo "  ❌ Failed (exit code: $exit_code)"
+    echo ""
+    read -rp "  Press Enter..."
+    return $exit_code
+}

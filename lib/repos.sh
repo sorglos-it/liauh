@@ -270,3 +270,57 @@ repo_resolve_ssh_key() {
     # Last resort - return as-is (will fail later if not found)
     echo "$ssh_key"
 }
+
+# Get list of enabled repositories (for menu)
+repo_list_enabled() {
+    local repo_config="${1:-.}/custom/repo.yaml"
+    
+    if [[ ! -f "$repo_config" ]]; then
+        return 1
+    fi
+    
+    yq eval ".repositories | keys | .[]" "$repo_config" 2>/dev/null | while read -r repo_name; do
+        local enabled
+        enabled=$(yq eval ".repositories.$repo_name.enabled // false" "$repo_config" 2>/dev/null)
+        if [[ "$enabled" == "true" ]]; then
+            echo "$repo_name"
+        fi
+    done
+}
+
+# Get repository display name
+repo_get_name() {
+    local repo_config="${1:-.}/custom/repo.yaml"
+    local repo_id="$2"
+    
+    yq eval ".repositories.$repo_id.name" "$repo_config" 2>/dev/null
+}
+
+# Get repository path
+repo_get_path() {
+    local repo_config="${1:-.}/custom/repo.yaml"
+    local repo_id="$2"
+    
+    local path
+    path=$(yq eval ".repositories.$repo_id.path" "$repo_config" 2>/dev/null)
+    
+    if [[ "$path" == /* ]]; then
+        echo "$path"
+    else
+        echo "${LIAUH_DIR}/custom/${path}"
+    fi
+}
+
+# Check if custom repo has any enabled scripts
+repo_has_scripts() {
+    local repo_path="$1"
+    
+    if [[ ! -f "$repo_path/custom.yaml" ]]; then
+        return 1
+    fi
+    
+    # Try to get script count
+    local count
+    count=$(yq eval ".scripts | length" "$repo_path/custom.yaml" 2>/dev/null)
+    [[ -n "$count" && "$count" != "null" && "$count" -gt 0 ]]
+}

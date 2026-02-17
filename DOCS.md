@@ -152,25 +152,67 @@ bash liauh.sh --no-update
 - Falls back gracefully if git unavailable or offline
 - Updates are non-blocking - if they fail, LIAUH starts anyway
 
-### Main menu
+### Repository Selector (With Custom Repos)
+
+If custom repositories are enabled in `custom/repo.yaml`:
 
 ```
-LIAUH - Linux Install and Update Helper
++==============================================================================+
+|LIAUH - Linux Install and Update Helper                       VERSION: 0.2|
++==============================================================================+
 
-Detected: ubuntu (debian) - 25.10
+  Detected: ubuntu (debian) - 25.10
 
-  1) database
-  2) language
-  3) security
-  4) webserver
+   1) LIAUH Scripts
+   2) Custom: My Scripts
+   3) Custom: Company Tools
 
-   c) Custom scripts
-
-──────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────
    q) Quit
-──────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────
 
-Choose: 
+  Choose: 
+```
+
+**Select 1:** LIAUH system scripts (13 built-in scripts)
+**Select 2+:** Custom repository scripts (from cloned repos)
+
+### LIAUH System Scripts Menu
+
+```
++==============================================================================+
+|LIAUH - Linux Install and Update Helper                       VERSION: 0.2|
++==============================================================================+
+
+  System Scripts
+
+   1) system
+   2) database
+   3) webserver
+
+──────────────────────────────────────────────────────────────────────────────
+  b) Back   q) Quit
+──────────────────────────────────────────────────────────────────────────────
+
+  Choose: 
+```
+
+### Custom Repository Menu
+
+```
++==============================================================================+
+|Custom: My Scripts                                             VERSION: 0.2|
++==============================================================================+
+
+   1) deployment
+   2) monitoring
+   3) backup
+
+──────────────────────────────────────────────────────────────────────────────
+  b) Back   q) Quit
+──────────────────────────────────────────────────────────────────────────────
+
+  Choose: 
 ```
 
 ---
@@ -500,7 +542,7 @@ repositories:
     path: "public-repo"
     auth_method: "none"
     enabled: true
-    auto_update: false          # Optional: disable auto-update for read-only
+    auto_update: true
 ```
 
 ### Global Settings
@@ -536,24 +578,30 @@ Reference them in `repo.yaml` with `${VARIABLE_NAME}` syntax.
 
 ### Auto-Update Control
 
-Use `auto_update: false` for read-only repositories:
+Use `auto_update: false` to prevent automatic updates (pulls) on each startup:
 
 ```yaml
 repositories:
-  company-standards:
-    name: "Company Standards"
-    url: "git@github.com:company/standards.git"
-    path: "company-standards"
+  frozen-version:
+    name: "v1.0 Frozen Version"
+    url: "git@github.com:company/scripts-v1.git"
+    path: "frozen-v1"
     auth_method: "ssh"
     ssh_key: "id_rsa"
     enabled: true
-    auto_update: false          # Don't auto-pull this repo
+    auto_update: false          # Don't auto-pull (keep frozen)
 ```
 
 When `auto_update: false`:
 - Repository is cloned initially (if not present)
 - Subsequent runs skip pulling updates
-- Useful for frozen/read-only repos
+- Useful for: frozen versions, large repos (performance), local-only repos
+
+When `auto_update: true` (default):
+- Repository is cloned initially (if not present)
+- Every startup: git pull to get latest changes
+- Works for both public and private repos
+- No security concerns (read/pull doesn't require write access)
 
 ### How It Works
 
@@ -752,29 +800,50 @@ exit $?
 ```
 liauh.sh
   ├─ Set LIAUH_DIR
-  ├─ Source libraries: core, yaml, menu, execute
+  ├─ Source libraries: core, yaml, menu, execute, repos
   ├─ detect_os()           → from core.sh
   ├─ yaml_load("config")   → from yaml.sh
+  ├─ repo_init()           → from repos.sh (clone/pull custom repos)
   └─ menu_main()           → from menu.sh
+      ├─ Check for custom repos
+      ├─ If repos exist → menu_repositories()
+      │   ├─ Show "LIAUH Scripts" + custom repos
+      │   └─ Route to menu_liauh_scripts() or menu_custom_repo_scripts()
+      └─ If no repos → menu_liauh_scripts() directly
 ```
 
 ### Execution Flow
 
+**LIAUH System Scripts:**
 ```
-User selects action
-  ├─ Count prompts from YAML
+User selects category → selects script → selects action
+  ├─ Load action details from config.yaml
+  ├─ Count prompts
   ├─ For each prompt:
   │   ├─ Show question + default
   │   ├─ Read input
   │   └─ Validate based on type
   ├─ Ask confirmation: Execute '[action]' now? (y/N)
   ├─ Build parameter string: action,VAR1=val1,VAR2=val2,...
-  │   Example: install,DOMAIN=example.com,SSL=yes,EMAIL=admin@test.com
   └─ Execute script:
       ├─ If needs_sudo: true  → sudo bash script.sh "param_string"
-      │                         (LIAUH runs unprivileged, script gets sudo elevation)
-      │                         (Password handled by system sudo, not LIAUH)
       └─ If needs_sudo: false → bash script.sh "param_string"
+```
+
+**Custom Repository Scripts:**
+```
+User selects custom repo → selects script → selects action
+  ├─ Load action details from repo/custom.yaml (not config.yaml)
+  ├─ Count prompts
+  ├─ For each prompt:
+  │   ├─ Show question + default
+  │   ├─ Read input
+  │   └─ Validate based on type
+  ├─ Ask confirmation: Execute '[action]' now? (y/N)
+  ├─ Build parameter string: action,VAR1=val1,VAR2=val2,...
+  └─ Execute script from repo:
+      ├─ If needs_sudo: true  → sudo bash repo/scripts/script.sh "param_string"
+      └─ If needs_sudo: false → bash repo/scripts/script.sh "param_string"
 ```
 
 ### Permission Handling

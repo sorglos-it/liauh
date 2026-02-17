@@ -1,6 +1,8 @@
-# Available Scripts
+# LIAUH System Scripts
 
-Complete reference of all LIAUH system scripts and their actions.
+Complete reference of all built-in LIAUH system scripts and their actions.
+
+**Note:** This list shows LIAUH system scripts only. Custom repositories have their own scripts defined in their `custom.yaml` files.
 
 ## Overview
 
