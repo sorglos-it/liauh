@@ -63,7 +63,7 @@ menu_footer() {
     
     # Calculate padding for quit + system info
     # Total width: 80 = | (1) + 2 spaces (2) + "q) Quit" (7) + padding + system_info + space (1) + | (1)
-    local len=$(( ${#system_info} + 12 ))
+    local len=$(( ${#system_info} + 13 ))
     local padding=$(( 80 - len ))
     printf "|  q) Quit%*s %s |\n" $padding "" "$system_info"
     
