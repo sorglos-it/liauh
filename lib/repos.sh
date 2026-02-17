@@ -327,16 +327,24 @@ repo_list_enabled() {
 
 # Get repository display name
 repo_get_name() {
-    local repo_config="${1:-.}/custom/repo.yaml"
+    local repo_config="$1"
     local repo_id="$2"
+    
+    # Support both full path and directory path
+    [[ ! -f "$repo_config" ]] && repo_config="${repo_config%/}/custom/repo.yaml"
+    [[ ! -f "$repo_config" ]] && repo_config="${repo_config}/custom/repo.yaml"
     
     _yq_eval ".repositories.$repo_id.name" "$repo_config" 2>/dev/null
 }
 
 # Get repository path
 repo_get_path() {
-    local repo_config="${1:-.}/custom/repo.yaml"
+    local repo_config="$1"
     local repo_id="$2"
+    
+    # Support both full path and directory path
+    [[ ! -f "$repo_config" ]] && repo_config="${repo_config%/}/custom/repo.yaml"
+    [[ ! -f "$repo_config" ]] && repo_config="${repo_config}/custom/repo.yaml"
     
     local path
     path=$(_yq_eval ".repositories.$repo_id.path" "$repo_config" 2>/dev/null)
