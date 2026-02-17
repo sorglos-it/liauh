@@ -147,7 +147,7 @@ menu_show_repositories() {
 # Show LIAUH system scripts (categories)
 menu_show_main() {
     menu_clear
-    menu_header "LIAUH - Linux Install and Update Helper"
+    menu_header "LIAUH - Linux Install and Update Helper" "${LIAUH_VERSION}"
     local -a cats; _get_categories cats
     local i=1; for c in "${cats[@]}"; do 
         local desc=$(yaml_info "$c" description)
