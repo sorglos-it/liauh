@@ -63,20 +63,16 @@ repo_sync_one() {
     
     local enabled url path auth_method auto_update
     
+    # Get config
     enabled=$(_yq_eval ".repositories.$repo_name.enabled // false" "$repo_config" 2>/dev/null)
-    
-    if [[ "$enabled" != "true" ]]; then
-        return 0
-    fi
-    
     auto_update=$(_yq_eval ".repositories.$repo_name.auto_update // true" "$repo_config" 2>/dev/null)
     url=$(_yq_eval ".repositories.$repo_name.url" "$repo_config" 2>/dev/null)
     path=$(_yq_eval ".repositories.$repo_name.path" "$repo_config" 2>/dev/null)
     auth_method=$(_yq_eval ".repositories.$repo_name.auth_method // none" "$repo_config" 2>/dev/null)
     
-    if [[ -z "$url" || -z "$path" ]]; then
-        msg_warn "Repository '$repo_name' missing url or path, skipping"
-        return 1
+    # Skip if no path defined
+    if [[ -z "$path" ]]; then
+        return 0
     fi
     
     # Resolve path - automatically prefix with custom/
@@ -84,17 +80,32 @@ repo_sync_one() {
         path="${LIAUH_DIR}/custom/${path}"
     fi
     
-    if [[ -d "$path/.git" ]]; then
-        # Repository exists, pull if auto_update is true
-        if [[ "$auto_update" == "true" ]]; then
+    # If repo already exists locally (as git or normal dir), use it (regardless of clone/update)
+    if [[ -d "$path" ]]; then
+        # Repository exists locally
+        if [[ -d "$path/.git" && "$auto_update" == "true" ]]; then
+            # It's a git repo and auto_update is enabled → pull updates
             repo_pull "$repo_name" "$url" "$path" "$auth_method" "$repo_config"
         else
-            msg_info "Skipping auto-update for '$repo_name' (auto_update: false)"
+            # Either not a git repo, or auto_update is false
+            msg_info "Using local repo '$repo_name'"
         fi
-    else
-        # Repository doesn't exist, clone it
-        repo_clone "$repo_name" "$url" "$path" "$auth_method" "$repo_config"
+        return 0
     fi
+    
+    # Repo doesn't exist locally
+    # Only try to clone if enabled=true AND url is non-empty
+    if [[ "$enabled" != "true" ]]; then
+        return 0
+    fi
+    
+    if [[ -z "$url" ]]; then
+        msg_info "Repository '$repo_name' disabled or no URL specified"
+        return 0
+    fi
+    
+    # Clone the repository
+    repo_clone "$repo_name" "$url" "$path" "$auth_method" "$repo_config"
 }
 
 # Clone repository with authentication

@@ -7,15 +7,16 @@
 # Each repository should contain a custom.yaml file defining its scripts.
 
 repositories:
-  # Demo Repository - Local (for testing)
-  # This is a built-in demo repository in custom/demo-scripts/
+  # Demo Repository - Built-in example scripts
+  # Already exists locally in custom/demo-scripts/
+  # If you want to clone from remote: set enabled: true and add git URL
   demo-scripts:
     name: "Demo Scripts"
-    url: "demoURL"
+    url: ""  # Leave empty to use local; set to git URL to clone from remote
     path: "demo-scripts"
     auth_method: "none"
-    enabled: true
-    auto_update: false
+    enabled: true  # Use local repo; set URL + enabled: true to sync from remote
+    auto_update: false  # Don't auto-pull on startup
 
   # Example 1: SSH with custom/keys/ (recommended)
   # See DOCS.md for SSH setup instructions
