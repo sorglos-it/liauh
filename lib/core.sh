@@ -12,30 +12,30 @@ debug() {
 # ANSI Color Codes for Terminal Output
 # ============================================================================
 
-export COLOR_RESET='\033[0m'
-export COLOR_BOLD='\033[1m'
-export COLOR_DIM='\033[2m'
-export COLOR_UNDERLINE='\033[4m'
+export COLOR_RESET=$'\033[0m'
+export COLOR_BOLD=$'\033[1m'
+export COLOR_DIM=$'\033[2m'
+export COLOR_UNDERLINE=$'\033[4m'
 
-export COLOR_BLACK='\033[0;30m'
-export COLOR_RED='\033[0;31m'
-export COLOR_GREEN='\033[0;32m'
-export COLOR_YELLOW='\033[0;33m'
-export COLOR_BLUE='\033[0;34m'
-export COLOR_MAGENTA='\033[0;35m'
-export COLOR_CYAN='\033[0;36m'
-export COLOR_WHITE='\033[0;37m'
+export COLOR_BLACK=$'\033[0;30m'
+export COLOR_RED=$'\033[0;31m'
+export COLOR_GREEN=$'\033[0;32m'
+export COLOR_YELLOW=$'\033[0;33m'
+export COLOR_BLUE=$'\033[0;34m'
+export COLOR_MAGENTA=$'\033[0;35m'
+export COLOR_CYAN=$'\033[0;36m'
+export COLOR_WHITE=$'\033[0;37m'
 
-export COLOR_BOLD_RED='\033[1;31m'
-export COLOR_BOLD_GREEN='\033[1;32m'
-export COLOR_BOLD_YELLOW='\033[1;33m'
-export COLOR_BOLD_BLUE='\033[1;34m'
-export COLOR_BOLD_CYAN='\033[1;36m'
-export COLOR_BOLD_WHITE='\033[1;37m'
+export COLOR_BOLD_RED=$'\033[1;31m'
+export COLOR_BOLD_GREEN=$'\033[1;32m'
+export COLOR_BOLD_YELLOW=$'\033[1;33m'
+export COLOR_BOLD_BLUE=$'\033[1;34m'
+export COLOR_BOLD_CYAN=$'\033[1;36m'
+export COLOR_BOLD_WHITE=$'\033[1;37m'
 
-export COLOR_BG_RED='\033[41m'
-export COLOR_BG_GREEN='\033[42m'
-export COLOR_BG_YELLOW='\033[43m'
+export COLOR_BG_RED=$'\033[41m'
+export COLOR_BG_GREEN=$'\033[42m'
+export COLOR_BG_YELLOW=$'\033[43m'
 
 # Shorter aliases
 C_RESET="$COLOR_RESET"

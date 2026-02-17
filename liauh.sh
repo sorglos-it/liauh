@@ -1,7 +1,7 @@
 #!/bin/bash
 # LIAUH - Linux Install and Update Helper (main entry point)
 
-LIAUH_VERSION="0.2"
+LIAUH_VERSION="0.3"
 LIAUH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export LIAUH_VERSION LIAUH_DIR
 

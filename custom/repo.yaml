@@ -37,7 +37,7 @@ repositories:
     auth_method: "ssh"
     ssh_key: "id_rsa"
     enabled: false      # Change to true to show in menu and enable cloning
-    auto_update: true   # Auto-pull updates on startup (if enabled=true or repo exists)
+    auto_update: false  # Auto-pull updates on startup (independent of enabled)
 
   # Example 2: HTTPS with Personal Access Token
   # See DOCS.md for GitHub token setup

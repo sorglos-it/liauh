@@ -1,114 +1,136 @@
 # LIAUH - Linux Install and Update Helper
 
-**Interactive menu system for managing system installation and update scripts**
+**v0.3** | Unified system management framework with interactive menu system
 
 ## 🚀 Installation
 
-### Option 1: One-liner with wget (Recommended)
+### Quick Start (One-liner)
 ```bash
-wget -qO - https://raw.githubusercontent.com/sorglos-it/liauh/main/install.sh | bash && ./liauh/liauh.sh
+git clone https://github.com/sorglos-it/liauh.git && cd liauh && bash liauh.sh
 ```
 
-### Option 2: One-liner with curl
+### From GitHub
 ```bash
-curl -sSL https://raw.githubusercontent.com/sorglos-it/liauh/main/install.sh | bash && ./liauh/liauh.sh
-```
-
-### Option 3: Git Clone
-```bash
-git clone https://github.com/sorglos-it/liauh.git
-cd liauh && bash liauh.sh
-```
-
-### Option 4: Manual Install
-```bash
-sudo apt-get update && sudo apt-get install -y git
-cd ~ && git clone https://github.com/sorglos-it/liauh.git
-cd liauh && bash liauh.sh
+wget -qO - https://raw.githubusercontent.com/sorglos-it/liauh/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/sorglos-it/liauh/main/install.sh | bash
 ```
 
 ## 📖 Usage
 
-### Start the Interactive Menu
+### Start LIAUH
 ```bash
 bash liauh.sh
 ```
 
-The menu structure depends on your custom repositories:
+### Menu Structure
 
-**With Custom Repositories Enabled:**
 ```
-LIAUH - Linux Install and Update Helper
++==============================================================================+
+| LIAUH - Linux Install and Update Helper                         VERSION: 0.3 |
++==============================================================================+
+|
+   1) LIAUH - Linux Install and Update Helper
+   2) Demo Scripts
+|
++==============================================================================+
+|   q) Quit                                    ubuntu (debian) · v25.10 |
++==============================================================================+
 
-  1) LIAUH Scripts       ← System Scripts (13 scripts)
-  2) Custom: my-scripts  ← Custom Repo 1
-  3) Custom: team-tools  ← Custom Repo 2
-
-   q) Quit
-```
-
-Select a repository, then choose categories and scripts within it.
-
-**Without Custom Repositories:**
-Displays LIAUH system scripts directly (like previous versions).
-
-### Command Line Options
-
-```bash
-bash liauh.sh                # Start menu (auto-updates)
-bash liauh.sh --no-update    # Start without checking for updates
-bash liauh.sh --debug        # Enable debug/verbose output
-bash liauh.sh --check-update # Check for updates (don't apply)
-bash liauh.sh --update       # Apply updates manually
+  Choose:
 ```
 
-## ✨ Features
+**Select a Repository:**
+- **LIAUH Scripts** - 13 built-in system management scripts
+- **Custom Repos** - Add your own script repositories (enabled via config)
 
-- **Interactive Menu** - Easy navigation for non-technical users
-- **OS Detection** - Supports Debian, Red Hat, Arch, SUSE, Alpine, Proxmox
-- **Auto-Update** - Keeps LIAUH scripts current from GitHub
-- **Multi-Repo Support** - Clone multiple custom script repositories with auto-updates
-- **Flexible Authentication** - SSH keys, Personal Access Tokens, or public repos
-- **SSH Key Management** - Store keys in `custom/keys/` (never committed)
-- **Interactive Prompts** - Text input, yes/no questions, number selection
-- **Sudo Support** - Individual scripts run with sudo when needed (LIAUH runs as normal user)
-- **No Dependencies** - Works with bash, git, and standard tools
-- **13 System Scripts** - Pre-built scripts for common Linux management tasks
+**Then navigate:**
+Categories → Scripts → Actions
+
+### CLI Options
+
+| Option | Effect |
+|--------|--------|
+| `bash liauh.sh` | Start menu (auto-checks for updates) |
+| `bash liauh.sh --no-update` | Skip auto-update check |
+| `bash liauh.sh --debug` | Enable verbose output |
+| `bash liauh.sh --check-update` | Check for updates only |
+
+## ✨ Key Features
+
+- **Interactive Menu** - Clean, intuitive box-based UI
+- **Multi-OS Support** - Debian, Ubuntu, Red Hat, Arch, SUSE, Alpine, Proxmox
+- **Auto-Update** - Keeps LIAUH current from GitHub
+- **Custom Script Repos** - Clone multiple repositories with independent configs
+- **Flexible Auth** - SSH keys, Personal Access Tokens, public repos
+- **Smart SSH Keys** - Auto-resolve from `custom/keys/` or `~/.ssh/`
+- **Interactive Prompts** - Text input, yes/no, selection menus
+- **Selective Sudo** - Individual scripts run elevated, LIAUH stays unprivileged
+- **Zero Dependencies** - Just bash, git, and standard tools
+- **Production Ready** - 15 tested scripts (13 system + 2 reference)
+
+## 🏗️ Architecture
+
+- **liauh.sh** - Main entry point (945 lines)
+- **lib/** - 7 focused libraries (colors, core, yaml, menu, execute, repos)
+- **scripts/** - 13 production + 2 reference scripts
+- **custom/** - User repositories (ignored by git)
+- **config.yaml** - System scripts configuration
+- **custom/repo.yaml** - Custom repository definitions
+
+## 📋 System Scripts
+
+| Category | Scripts |
+|----------|---------|
+| System Updates | `ubuntu.sh`, `debian.sh` |
+| System Config | `linux.sh` (network, DNS, users) |
+| Web Servers | `apache.sh`, `nginx.sh` |
+| Containers | `docker.sh`, `portainer.sh` |
+| Databases | `mariadb.sh` |
+| Appliances | `proxmox.sh`, `pikvm-v3.sh` |
+| Tools | `compression.sh`, `ca-cert-update.sh` |
+
+See **[SCRIPTS.md](SCRIPTS.md)** for full reference.
+
+## 🔧 Custom Repositories
+
+Add your own scripts:
+
+1. Create or clone a repository with `custom.yaml`
+2. Edit `custom/repo.yaml`:
+```yaml
+repositories:
+  my-scripts:
+    name: "My Scripts"
+    url: "https://github.com/user/my-scripts.git"
+    path: "my-scripts"
+    auth_method: "none"
+    enabled: true
+    auto_update: false
+```
+
+3. LIAUH handles cloning, updates, and execution
+
+See **[DOCS.md](DOCS.md)** for authentication setup.
 
 ## 📚 Documentation
 
-For detailed configuration, troubleshooting, and architecture:
+- **[DOCS.md](DOCS.md)** - Comprehensive guide, architecture, configuration
+- **[SCRIPTS.md](SCRIPTS.md)** - System scripts reference table
+- **[CHANGES.md](CHANGES.md)** - Version history
 
-- **[DOCS.md](DOCS.md)** - Complete documentation with examples and architecture
-- **[SCRIPTS.md](SCRIPTS.md)** - Reference of all available system scripts
-- **[custom/repo.yaml](custom/repo.yaml)** - Custom repository configuration template
-- **[LICENSE](LICENSE)** - MIT License
-
-## 💻 System Requirements
+## 💻 Requirements
 
 - Linux (Debian, Red Hat, Arch, SUSE, Alpine, or compatible)
 - Bash 4.0+
-- Git (for auto-update)
+- Git (for updates)
 - `sudo` access (if scripts need root)
 
-## 📝 License
+## 📄 License
 
-MIT License - Free for commercial and personal use
+MIT License - Free for personal and commercial use
 
 **Author:** Thomas Weirich (Sorglos IT)
 
-See [LICENSE](LICENSE) for full details.
-
 ---
 
-## 💝 Support & Donate
-
-If you find LIAUH helpful, please consider supporting its development!
-
-[![PayPal Donate](https://img.shields.io/badge/PayPal-Donate-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=9U6NJRGR7SE52)
-
-Your support helps maintain and improve LIAUH. Thank you! 🙏
-
----
-
-**Questions?** See **DOCS.md** for detailed documentation.
+**Questions?** Check **[DOCS.md](DOCS.md)** for detailed answers.

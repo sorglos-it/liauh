@@ -1,8 +1,8 @@
 # LIAUH System Scripts
 
-Complete reference of all built-in LIAUH system scripts and their actions.
+**v0.3** | Complete reference of all built-in LIAUH system scripts and their actions.
 
-**Note:** This list shows LIAUH system scripts only. Custom repositories have their own scripts defined in their `custom.yaml` files.
+**Note:** This list shows LIAUH system scripts only. Custom repositories have their own scripts defined in their `custom.yaml` files. See [DOCS.md](DOCS.md) for custom repository setup.
 
 ## Overview
 
