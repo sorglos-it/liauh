@@ -54,7 +54,7 @@ bash liauh.sh --update       # Apply updates manually
 - **Flexible Authentication** - SSH keys, Personal Access Tokens, or public repos
 - **SSH Key Management** - Store keys in `custom/keys/` (never committed)
 - **Interactive Prompts** - Text input, yes/no questions, number selection
-- **Sudo Caching** - Password prompted once per session (~15 min reuse)
+- **Sudo Support** - Scripts can require root access (run with `sudo bash liauh.sh`)
 - **No Dependencies** - Works with bash, git, and standard tools
 - **13 System Scripts** - Pre-built scripts for common Linux management tasks
 
@@ -150,6 +150,15 @@ repositories:
 
 See **[custom/repo.yaml](custom/repo.yaml)** for complete documentation.
 
+#### Running Scripts Requiring Root Access
+
+Some scripts need root access. Run LIAUH with sudo:
+```bash
+sudo bash liauh.sh
+```
+
+This allows scripts with `needs_sudo: true` in config.yaml to execute properly. LIAUH itself does not manage passwords - sudo authentication is handled by the Linux system.
+
 ## 📚 Documentation
 
 - **README.md** - This file (quick start)
@@ -208,8 +217,12 @@ bash liauh.sh
 ```
 (Usually not needed - auto-handled on first run)
 
-### Password keeps getting asked
-This is normal - LIAUH caches your sudo password for ~15 minutes.
+### Scripts requiring sudo
+If a script has `needs_sudo: true` in config.yaml, you must run LIAUH with sudo:
+```bash
+sudo bash liauh.sh
+```
+LIAUH itself does not manage passwords - sudo is handled at the Linux system level.
 
 ### Update not working
 ```bash

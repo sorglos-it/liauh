@@ -10,10 +10,11 @@
 2. [Directory Structure](#directory-structure)
 3. [Quick Start](#quick-start)
 4. [Configuration](#configuration)
-5. [Creating Scripts](#creating-scripts)
-6. [Architecture](#architecture)
-7. [API Reference](#api-reference)
-8. [Troubleshooting](#troubleshooting)
+5. [Custom Script Repositories](#custom-script-repositories)
+6. [Creating Scripts](#creating-scripts)
+7. [Architecture](#architecture)
+8. [API Reference](#api-reference)
+9. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -797,29 +798,31 @@ bash scripts/my_script.sh install
 echo $?
 ```
 
-### Issue: Sudo password keeps being asked
+### Issue: Running scripts with sudo
 
-If your script calls `sudo` multiple times and each asks for password:
+If a script has `needs_sudo: true`, run LIAUH with sudo:
 
-**Problem:** sudoers policy might not allow password caching
+```bash
+sudo bash liauh.sh
+```
 
-**Solution:** Sudo caches automatically - if it's not working:
+**How it works:**
+- Scripts run as root when LIAUH is called with `sudo`
+- No extra password handling needed in your script
+- Sudo credentials are managed by the Linux system, not LIAUH
 
-1. Check sudoers policy:
-   ```bash
-   sudo -l  # Show sudo permissions
-   sudo -v  # Test password cache
-   ```
+**Example:**
+```bash
+#!/bin/bash
+# Script runs with sudo already applied
+apt-get update          # Works - already root
+apt-get install pkg     # Works - already root
+```
 
-2. Your script doesn't need to do anything special:
-   ```bash
-   #!/bin/bash
-   # LIAUH passed you as: sudo bash script.sh "install,DOMAIN=..."
-   # Password is already cached by the initial sudo call
-   
-   sudo apt-get update      # No prompt
-   sudo apt-get install pkg # No prompt (uses cached)
-   ```
+**If password is still requested:**
+- You may not have sudo permissions
+- Run `sudo -l` to check your sudoers configuration
+- System administrator may need to update sudoers
 
 3. If sudo still prompts, ask your system admin to check:
    - sudoers `timestamp_timeout` setting (default 15 minutes)
