@@ -1,6 +1,6 @@
 # LIAUH - Linux Install and Update Helper
 
-**v0.4+** | 43 system management scripts for all Linux distributions
+**v0.4+** | 44 system management scripts for all Linux distributions
 
 ## 🚀 Installation
 
@@ -20,7 +20,7 @@ bash liauh.sh
 ## ✨ Features
 
 - **Multi-Distribution** - Debian, Ubuntu, Red Hat, Arch, SUSE, Alpine, Proxmox
-- **43 Scripts** - Network, system management, web servers, databases, languages, tools
+- **44 Scripts** - Network, system management, web servers, databases, languages, tools
 - **Auto-Updates** - Self-updates on startup with transparent restart
 - **Custom Repos** - Clone your own script repositories with git authentication
 - **Interactive Menu** - Clean, intuitive box-based CLI interface
@@ -46,7 +46,7 @@ Menu flow:
          └─ Actions
 ```
 
-## 🛠️ System Scripts (43)
+## 🛠️ System Scripts (44)
 
 ### Essential Tools (11)
 curl, wget, git, vim, nano, htop, tmux, screen, build-essential, jq, locate
@@ -66,8 +66,8 @@ Node.js, Python, Ruby, Go, PHP, Perl
 ### Logging & Monitoring (4)
 rsyslog, syslog-ng, fail2ban, logrotate
 
-### Networking (9)
-OpenSSH, net-tools, bind-utils, WireGuard, OpenVPN, UFW, Pi-hole, AdGuard Home, Samba
+### Networking (10)
+OpenSSH, net-tools, bind-utils, WireGuard, OpenVPN, UFW, Pi-hole, AdGuard Home, Samba, cifs-utils
 
 ### System Management (5)
 Linux (network, DNS, users, groups), Ubuntu, Debian, Proxmox, PiKVM v3

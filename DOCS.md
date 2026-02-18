@@ -38,7 +38,7 @@ liauh/
 │   ├── menu.sh          # Menu display + navigation
 │   ├── execute.sh       # Script execution engine
 │   └── repos.sh         # Repository sync + management
-├── scripts/             # 43 system management scripts
+├── scripts/             # 44 system management scripts
 │   ├── curl.sh, wget.sh, git.sh, vim.sh, nano.sh, htop.sh, tmux.sh, screen.sh,
 │   │   build-essential.sh, jq.sh, locate.sh (essential tools)
 │   ├── apache.sh, nginx.sh (web servers)

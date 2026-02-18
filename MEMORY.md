@@ -1,11 +1,11 @@
 # LIAUH - Project Memory
 
-**v0.4** | 42 production scripts with unified system management framework
+**v0.4** | 44 production scripts with unified system management framework
 
 ## Current Status
 
 - **Status**: Stable & Maintained
-- **Scripts**: 42 system management scripts
+- **Scripts**: 44 system management scripts
 - **Last Update**: 2026-02-18
 
 ## Architecture
@@ -20,7 +20,7 @@ liauh/
 │   ├── menu.sh          # Menu display + navigation
 │   ├── execute.sh       # Script execution engine
 │   └── repos.sh         # Repository sync + management
-├── scripts/             # 38 system management scripts
+├── scripts/             # 44 system management scripts
 ├── custom/              # User repositories (git-ignored except repo.yaml)
 ├── config.yaml          # System scripts configuration
 ├── README.md            # Quick start guide
@@ -39,7 +39,7 @@ liauh/
 - ✅ Proxmox VE
 - ✅ PiKVM v3
 
-## v0.3 - 38 Scripts Implemented & Tested
+## v0.4 - 44 Scripts Implemented & Tested
 
 ### Script Categories (8 Categories)
 
@@ -52,8 +52,8 @@ liauh/
 3. **Databases** (3)
    - MariaDB, PostgreSQL, MySQL
 
-4. **Containerization** (2)
-   - Docker, Portainer
+4. **Containerization** (3)
+   - Docker, Portainer, Docker Compose
 
 5. **Programming Languages** (6)
    - Node.js, Python, Ruby, Go, PHP, Perl
@@ -61,15 +61,15 @@ liauh/
 6. **Logging & Monitoring** (4)
    - rsyslog, syslog-ng, fail2ban, logrotate
 
-7. **Networking** (3)
-   - bind-utils, WireGuard, OpenVPN
+7. **Networking** (10)
+   - OpenSSH, net-tools, bind-utils, WireGuard, OpenVPN, UFW, Pi-hole, AdGuard Home, Samba, cifs-utils
 
 8. **System Management** (5)
    - Linux (network, DNS, users, groups), Ubuntu, Debian, Proxmox, PiKVM v3
 
 ### Testing Status
-- **Total Scripts**: 42
-- **Tested**: 42/42 ✓
+- **Total Scripts**: 44
+- **Tested**: 44/44 ✓
 - **All Distro Support**: 5 major families covered
 
 ## Key Features
@@ -120,8 +120,10 @@ SSH keys stored in `custom/keys/` (protected by .gitignore)
 
 - Added locate fast file search utility (indexed database)
 - Updated Essential Tools category: 10 → 11 scripts
-- Total script count: 41 → 42
-- Enhanced file indexing capabilities
+- Added cifs-utils for SMB/CIFS share mounting
+- Updated Networking category: 9 → 10 scripts
+- Total script count: 43 → 44
+- Enhanced networking and file sharing capabilities
 - All documentation updated
 
 ## Security Notes

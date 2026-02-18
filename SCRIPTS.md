@@ -1,12 +1,12 @@
 # LIAUH Scripts Reference
 
-**v0.4+** | Complete catalog of 43 system management scripts
+**v0.4+** | Complete catalog of 44 system management scripts
 
 All scripts support **install**, **update**, **uninstall**, and **config** actions (where applicable).
 
 ---
 
-## Script Categories (8 Categories, 43 Scripts)
+## Script Categories (8 Categories, 44 Scripts)
 
 LIAUH organizes scripts into 8 logical categories:
 
@@ -16,7 +16,7 @@ LIAUH organizes scripts into 8 logical categories:
 4. **Containerization** (3)
 5. **Programming Languages** (6)
 6. **Logging & Monitoring** (4)
-7. **Networking** (9)
+7. **Networking** (10)
 8. **System Management** (5)
 
 ---
@@ -104,7 +104,7 @@ System logging, log management, and security monitoring:
 
 ---
 
-## Networking (9)
+## Networking (10)
 
 Network tools, VPN, DNS ad-blocking, file sharing, and connectivity:
 
@@ -119,6 +119,7 @@ Network tools, VPN, DNS ad-blocking, file sharing, and connectivity:
 | **pihole** | Pi-hole DNS ad-blocking service | All 5 distros |
 | **adguard-home** | AdGuard Home DNS ad-blocking service | All 5 distros |
 | **samba** | Network file sharing with Samba/SMB protocol | All 5 distros |
+| **cifs-utils** | Mount and manage SMB/CIFS network shares | All 5 distros |
 
 ---
 
