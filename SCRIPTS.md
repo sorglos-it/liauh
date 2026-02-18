@@ -1,27 +1,27 @@
 # LIAUH Scripts Reference
 
-**v0.3** | Complete catalog of 40 system management scripts
+**v0.4+** | Complete catalog of 43 system management scripts
 
 All scripts support **install**, **update**, **uninstall**, and **config** actions (where applicable).
 
 ---
 
-## Script Categories (8 Categories, 40 Scripts)
+## Script Categories (8 Categories, 43 Scripts)
 
 LIAUH organizes scripts into 8 logical categories:
 
-1. **Essential Tools** (10)
+1. **Essential Tools** (11)
 2. **Webservers** (2)
 3. **Databases** (3)
-4. **Containerization** (2)
+4. **Containerization** (3)
 5. **Programming Languages** (6)
 6. **Logging & Monitoring** (4)
-7. **Networking** (8)
+7. **Networking** (9)
 8. **System Management** (5)
 
 ---
 
-## Essential Tools (10)
+## Essential Tools (11)
 
 Core utilities for system administration and development:
 
@@ -37,6 +37,7 @@ Core utilities for system administration and development:
 | **screen** | Terminal multiplexer | All 5 distros |
 | **build-essential** | Development tools and compilers | All 5 distros |
 | **jq** | JSON query processor | All 5 distros |
+| **locate** | Fast file search using indexed database | All 5 distros |
 
 ---
 
@@ -63,7 +64,7 @@ Data persistence and management:
 
 ---
 
-## Containerization (2)
+## Containerization (3)
 
 Container runtime and management platforms:
 
@@ -71,6 +72,7 @@ Container runtime and management platforms:
 |--------|-------------|----------|
 | **docker** | Docker container runtime | All 5 distros |
 | **portainer** | Portainer container management UI | All 5 distros |
+| **docker-compose** | Docker Compose multi-container orchestration | All 5 distros |
 
 ---
 
@@ -102,9 +104,9 @@ System logging, log management, and security monitoring:
 
 ---
 
-## Networking (8)
+## Networking (9)
 
-Network tools, VPN, DNS ad-blocking, and connectivity:
+Network tools, VPN, DNS ad-blocking, file sharing, and connectivity:
 
 | Script | Description | Supports |
 |--------|-------------|----------|
@@ -116,6 +118,7 @@ Network tools, VPN, DNS ad-blocking, and connectivity:
 | **ufw** | Uncomplicated Firewall for network security | All 5 distros |
 | **pihole** | Pi-hole DNS ad-blocking service | All 5 distros |
 | **adguard-home** | AdGuard Home DNS ad-blocking service | All 5 distros |
+| **samba** | Network file sharing with Samba/SMB protocol | All 5 distros |
 
 ---
 

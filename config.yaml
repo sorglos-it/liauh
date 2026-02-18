@@ -17,7 +17,7 @@ categories:
     description: "System configuration and management"
 
 scripts:
-  # Essential Tools (10)
+  # Essential Tools (11)
   curl:
     description: "HTTP requests utility"
     category: "Essential Tools"
@@ -236,6 +236,9 @@ scripts:
             variable: "CLIENT_ALIVE"
             type: "number"
             default: "300"
+      - name: "fix-xauthority"
+        parameter: "fix-xauthority"
+        description: "Fix X11 Xauthority permissions and generate trust"
 
   net-tools:
     description: "Network utilities (ifconfig, netstat)"
@@ -287,6 +290,26 @@ scripts:
       - name: "uninstall"
         parameter: "uninstall"
         description: "Uninstall jq"
+
+  locate:
+    description: "Fast file search using indexed database"
+    category: "Essential Tools"
+    file: "locate.sh"
+    needs_sudo: true
+    os_family: [debian, redhat, arch, suse, alpine]
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install locate"
+      - name: "update"
+        parameter: "update"
+        description: "Update locate database"
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall locate"
+      - name: "config"
+        parameter: "config"
+        description: "Show locate configuration info"
 
   # Web Servers (2)
   apache:
@@ -492,6 +515,26 @@ scripts:
         parameter: "uninstall"
         description: "Uninstall Portainer"
 
+  docker-compose:
+    description: "Docker Compose multi-container orchestration"
+    category: "Containerization"
+    file: "docker-compose.sh"
+    needs_sudo: true
+    os_family: [debian, redhat, arch, suse, alpine]
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Docker Compose"
+      - name: "update"
+        parameter: "update"
+        description: "Update Docker Compose"
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Docker Compose"
+      - name: "config"
+        parameter: "config"
+        description: "Show Docker Compose info"
+
   # Programming Languages (6)
   nodejs:
     description: "Node.js runtime and npm"
@@ -676,7 +719,7 @@ scripts:
         parameter: "config"
         description: "Configure logrotate"
 
-  # Networking (8)
+  # Networking (9)
   bind-utils:
     description: "DNS tools (dig, nslookup, host)"
     category: "Networking"
@@ -809,7 +852,32 @@ scripts:
         parameter: "config"
         description: "Show AdGuard Home configuration info"
 
-  # System Management (5)
+  samba:
+    description: "Network file sharing with Samba/SMB"
+    category: "Networking"
+    file: "samba.sh"
+    needs_sudo: true
+    os_family: [debian, redhat, arch, suse, alpine]
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Samba"
+      - name: "update"
+        parameter: "update"
+        description: "Update Samba"
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Samba"
+      - name: "config"
+        parameter: "config"
+        description: "Configure Samba globally (smb.conf)"
+      - name: "add-share"
+        parameter: "add-share"
+        description: "Add new Samba share"
+      - name: "smbuser"
+        parameter: "smbuser"
+        description: "Manage Samba users"
+
   linux:
     description: "Network, DNS, users, groups configuration"
     category: "System Management"

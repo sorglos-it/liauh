@@ -1,11 +1,11 @@
 # LIAUH - Project Memory
 
-**v0.3** | 38 production scripts with unified system management framework
+**v0.4** | 42 production scripts with unified system management framework
 
 ## Current Status
 
 - **Status**: Stable & Maintained
-- **Scripts**: 38 system management scripts
+- **Scripts**: 42 system management scripts
 - **Last Update**: 2026-02-18
 
 ## Architecture
@@ -43,8 +43,8 @@ liauh/
 
 ### Script Categories (8 Categories)
 
-1. **Essential Tools** (13)
-   - curl, wget, git, vim, nano, htop, tmux, screen, openssh, net-tools, build-essential, jq, ufw
+1. **Essential Tools** (11)
+   - curl, wget, git, vim, nano, htop, tmux, screen, build-essential, jq, locate
 
 2. **Webservers** (2)
    - Apache, Nginx
@@ -68,8 +68,8 @@ liauh/
    - Linux (network, DNS, users, groups), Ubuntu, Debian, Proxmox, PiKVM v3
 
 ### Testing Status
-- **Total Scripts**: 38
-- **Tested**: 38/38 ✓
+- **Total Scripts**: 42
+- **Tested**: 42/42 ✓
 - **All Distro Support**: 5 major families covered
 
 ## Key Features
@@ -116,12 +116,12 @@ SSH keys stored in `custom/keys/` (protected by .gitignore)
 - Flexible prompt system (text, yes/no, number types)
 - Context-aware menus with proper navigation
 
-## Recent Changes (v0.3)
+## Recent Changes (v0.4)
 
-- Added PostgreSQL database support (all distros)
-- Added MySQL database support (all distros)
-- Updated database category from 1 → 3 databases
-- Total script count: 36 → 38
+- Added locate fast file search utility (indexed database)
+- Updated Essential Tools category: 10 → 11 scripts
+- Total script count: 41 → 42
+- Enhanced file indexing capabilities
 - All documentation updated
 
 ## Security Notes

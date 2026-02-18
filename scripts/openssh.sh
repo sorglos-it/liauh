@@ -11,11 +11,17 @@ ACTION="${1%%,*}"
 # Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # Log informational messages with green checkmark
 log_info() {
     printf "${GREEN}✓${NC} %s\n" "$1"
+}
+
+# Log warning messages with yellow exclamation
+log_warn() {
+    printf "${YELLOW}⚠${NC} %s\n" "$1"
 }
 
 # Log error messages with red X and exit
@@ -178,6 +184,25 @@ ClientAliveInterval $CLIENT_ALIVE
     log_info "OpenSSH server configured and restarted successfully!"
 }
 
+# Fix Xauthority file permissions and generate trust (for X11 forwarding)
+fix_xauthority() {
+    log_info "Fixing X11 Xauthority configuration..."
+    
+    # Create .Xauthority file if it doesn't exist
+    sudo touch /root/.Xauthority
+    
+    # Set proper ownership
+    sudo chown root:root /root/.Xauthority
+    
+    # Set restrictive permissions (600 = rw-------)
+    sudo chmod 600 /root/.Xauthority
+    
+    # Generate trusted X11 authority for display :0
+    sudo xauth generate :0 . trusted || log_warn "xauth generate completed with warnings"
+    
+    log_info "X11 Xauthority fixed successfully!"
+}
+
 # Route to appropriate action
 case "$ACTION" in
     install)
@@ -191,6 +216,9 @@ case "$ACTION" in
         ;;
     config)
         configure_openssh
+        ;;
+    fix-xauthority)
+        fix_xauthority
         ;;
     *)
         log_error "Unknown action: $ACTION"

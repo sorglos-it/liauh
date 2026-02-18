@@ -1,6 +1,6 @@
 # LIAUH - Linux Install and Update Helper
 
-**v0.3** | 40 system management scripts for all Linux distributions
+**v0.4+** | 43 system management scripts for all Linux distributions
 
 ## 🚀 Installation
 
@@ -20,7 +20,7 @@ bash liauh.sh
 ## ✨ Features
 
 - **Multi-Distribution** - Debian, Ubuntu, Red Hat, Arch, SUSE, Alpine, Proxmox
-- **40 Scripts** - System management, web servers, databases, languages, tools
+- **43 Scripts** - Network, system management, web servers, databases, languages, tools
 - **Auto-Updates** - Self-updates on startup with transparent restart
 - **Custom Repos** - Clone your own script repositories with git authentication
 - **Interactive Menu** - Clean, intuitive box-based CLI interface
@@ -46,10 +46,10 @@ Menu flow:
          └─ Actions
 ```
 
-## 🛠️ System Scripts (40)
+## 🛠️ System Scripts (43)
 
-### Essential Tools (10)
-curl, wget, git, vim, nano, htop, tmux, screen, build-essential, jq
+### Essential Tools (11)
+curl, wget, git, vim, nano, htop, tmux, screen, build-essential, jq, locate
 
 ### Webservers (2)
 Apache, Nginx
@@ -57,8 +57,8 @@ Apache, Nginx
 ### Databases (3)
 MariaDB, PostgreSQL, MySQL
 
-### Containerization (2)
-Docker, Portainer
+### Containerization (3)
+Docker, Portainer, Docker Compose
 
 ### Programming Languages (6)
 Node.js, Python, Ruby, Go, PHP, Perl
@@ -66,8 +66,8 @@ Node.js, Python, Ruby, Go, PHP, Perl
 ### Logging & Monitoring (4)
 rsyslog, syslog-ng, fail2ban, logrotate
 
-### Networking (8)
-OpenSSH, net-tools, bind-utils, WireGuard, OpenVPN, UFW, Pi-hole, AdGuard Home
+### Networking (9)
+OpenSSH, net-tools, bind-utils, WireGuard, OpenVPN, UFW, Pi-hole, AdGuard Home, Samba
 
 ### System Management (5)
 Linux (network, DNS, users, groups), Ubuntu, Debian, Proxmox, PiKVM v3
@@ -98,7 +98,7 @@ See **[DOCS.md](DOCS.md#custom-repositories)** for setup.
 liauh/
 ├── liauh.sh              # Entry point (self-updating)
 ├── lib/                  # 7 focused libraries
-├── scripts/              # 40 system management scripts + custom repos
+├── scripts/              # 42 system management scripts + custom repos
 ├── custom/               # Your custom repos
 ├── config.yaml           # System scripts config
 ├── README.md            # This file
@@ -109,7 +109,7 @@ liauh/
 ## 📚 Documentation
 
 - **[DOCS.md](DOCS.md)** - Complete guide: architecture, configuration, templates, troubleshooting
-- **[SCRIPTS.md](SCRIPTS.md)** - All 40 scripts with categories and descriptions
+- **[SCRIPTS.md](SCRIPTS.md)** - All 43 scripts with categories and descriptions
 
 ## 🖥️ Supported Distributions
 

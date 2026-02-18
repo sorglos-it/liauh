@@ -1,6 +1,6 @@
 # LIAUH Documentation
 
-Complete guide to LIAUH v0.3 architecture, configuration, and development.
+Complete guide to LIAUH v0.4+ architecture, configuration, and development.
 
 ## Table of Contents
 
@@ -38,12 +38,12 @@ liauh/
 │   ├── menu.sh          # Menu display + navigation
 │   ├── execute.sh       # Script execution engine
 │   └── repos.sh         # Repository sync + management
-├── scripts/             # 40 system management scripts
+├── scripts/             # 43 system management scripts
 │   ├── curl.sh, wget.sh, git.sh, vim.sh, nano.sh, htop.sh, tmux.sh, screen.sh,
-│   │   build-essential.sh, jq.sh (essential tools)
+│   │   build-essential.sh, jq.sh, locate.sh (essential tools)
 │   ├── apache.sh, nginx.sh (web servers)
 │   ├── mariadb.sh, postgres.sh, mysql.sh (databases)
-│   ├── docker.sh, portainer.sh (containers)
+│   ├── docker.sh, portainer.sh, docker-compose.sh (containers)
 │   ├── nodejs.sh, python.sh, ruby.sh, golang.sh, php.sh, perl.sh (languages)
 │   ├── rsyslog.sh, syslog-ng.sh, fail2ban.sh, logrotate.sh (logging & monitoring)
 │   ├── openssh.sh, net-tools.sh, bind-utils.sh, wireguard.sh, openvpn.sh, ufw.sh, pihole.sh, adguard-home.sh (networking)
