@@ -29,6 +29,19 @@ log_warn() {
     printf "${YELLOW}⚠${NC} %s\n" "$1"
 }
 
+detect_os() {
+    source /etc/os-release || log_error "Cannot detect OS"
+    OS_DISTRO="${ID,,}"
+    case "$OS_DISTRO" in
+        ubuntu|debian|raspbian|linuxmint|pop) PKG_UPDATE="apt-get update"; PKG_INSTALL="apt-get install -y"; PKG_UNINSTALL="apt-get remove -y" ;;
+        fedora|rhel|centos|rocky|alma) PKG_UPDATE="dnf check-update || true"; PKG_INSTALL="dnf install -y"; PKG_UNINSTALL="dnf remove -y" ;;
+        arch|manjaro|endeavouros) PKG_UPDATE="pacman -Sy"; PKG_INSTALL="pacman -S --noconfirm"; PKG_UNINSTALL="pacman -R --noconfirm" ;;
+        opensuse*|sles) PKG_UPDATE="zypper refresh"; PKG_INSTALL="zypper install -y"; PKG_UNINSTALL="zypper remove -y" ;;
+        alpine) PKG_UPDATE="apk update"; PKG_INSTALL="apk add"; PKG_UNINSTALL="apk del" ;;
+        *) log_error "Unsupported distribution: $OS_DISTRO" ;;
+    esac
+}
+
 log_error() {
     printf "${RED}✗${NC} %s\n" "$1"
     exit 1
@@ -242,6 +255,43 @@ add_user_to_group() {
     fi
 }
 
+update_ca_cert() {
+    log_info "Updating CA certificate..."
+    
+    [[ -z "$SERVER" ]] && log_error "SERVER variable not set"
+    detect_os
+    
+    log_info "Fetching CA certificate from $SERVER..."
+    
+    if ! echo | openssl s_client -connect "$SERVER:443" -showcerts 2>/dev/null | openssl x509 -outform PEM | sudo tee $CA_PATH/ca-$SERVER.crt > /dev/null; then
+        log_error "Failed to fetch and install certificate from $SERVER"
+    fi
+    
+    log_info "Certificate installed to system CA store"
+    
+    log_info "Updating CA certificate database..."
+    if ! sudo $CA_UPDATE; then
+        log_error "Failed to update CA certificates"
+    fi
+    
+    log_info "CA certificate from $SERVER installed successfully!"
+}
+
+install_compression() {
+    log_info "Installing zip and unzip..."
+    detect_os
+    sudo $PKG_UPDATE || true
+    sudo $PKG_INSTALL zip unzip || log_error "Failed to install packages"
+    log_info "zip and unzip installed successfully!"
+}
+
+uninstall_compression() {
+    log_info "Uninstalling zip and unzip..."
+    detect_os
+    sudo $PKG_UNINSTALL zip unzip || log_error "Failed to uninstall packages"
+    log_info "zip and unzip uninstalled successfully!"
+}
+
 case "$ACTION" in
     network)
         configure_network
@@ -275,18 +325,32 @@ case "$ACTION" in
         add_user_to_group
         ;;
     
+    ca-cert)
+        update_ca_cert
+        ;;
+    
+    install-zip)
+        install_compression
+        ;;
+    
+    uninstall-zip)
+        uninstall_compression
+        ;;
+    
     *)
         log_error "Unknown action: $ACTION"
         echo "Usage:"
         echo "  linux.sh network,INTERFACE=eth0,DHCP_MODE=yes"
-        echo "  linux.sh network,INTERFACE=eth0,DHCP_MODE=no,IP_ADDRESS=192.168.1.100/24,GATEWAY=192.168.1.1,DNS_SERVER=8.8.8.8"
         echo "  linux.sh dns,DNS_SERVER=8.8.8.8"
         echo "  linux.sh hostname,HOSTNAME=myserver"
-        echo "  linux.sh user-add,USERNAME=testuser,SHELL=/bin/bash"
+        echo "  linux.sh user-add,USERNAME=testuser"
         echo "  linux.sh user-delete,USERNAME=testuser"
-        echo "  linux.sh user-password,USERNAME=testuser,PASSWORD=newpassword"
+        echo "  linux.sh user-password,USERNAME=testuser,PASSWORD=newpass"
         echo "  linux.sh group-create,GROUPNAME=developers"
         echo "  linux.sh user-to-group,USERNAME=testuser,GROUPNAME=developers"
+        echo "  linux.sh ca-cert,SERVER=server.name"
+        echo "  linux.sh install-zip"
+        echo "  linux.sh uninstall-zip"
         exit 1
         ;;
 esac

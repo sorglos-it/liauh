@@ -44,47 +44,6 @@ scripts:
         description: "Detach Ubuntu Pro subscription"
         prompts: []
 
-  ca-cert-update:
-    description: "Install CA certificate from a server"
-    category: "Security"
-    file: "ca-cert-update.sh"
-    needs_sudo: true
-    os_family:
-      - debian
-      - redhat
-    
-    actions:
-      - name: "update"
-        parameter: "update"
-        prompts:
-          - question: "CA server hostname? (e.g., cert.my.lan)"
-            variable: "SERVER"
-            type: "text"
-            default: "cert.my.lan"
-
-  compression:
-    description: "Manage compression tools (zip/unzip)"
-    category: "Tools"
-    file: "compression.sh"
-    needs_sudo: true
-    os_family:
-      - debian
-      - redhat
-      - arch
-      - suse
-      - alpine
-    
-    actions:
-      - name: "install"
-        parameter: "install"
-        description: "Install zip and unzip"
-        prompts: []
-      
-      - name: "uninstall"
-        parameter: "uninstall"
-        description: "Uninstall zip and unzip"
-        prompts: []
-
   mariadb:
     description: "MariaDB database server management"
     category: "Database"
@@ -414,46 +373,6 @@ scripts:
             type: "yes/no"
             default: "no"
 
-  portainer-client:
-    description: "Portainer Agent (Client/Edge)"
-    category: "Tools"
-    file: "portainer-client.sh"
-    needs_sudo: true
-    os_family:
-      - debian
-      - redhat
-      - arch
-      - suse
-      - alpine
-    
-    actions:
-      - name: "install"
-        parameter: "install"
-        description: "Install Portainer Agent"
-        prompts:
-          - question: "Agent port? (default: 9001)"
-            variable: "AGENT_PORT"
-            type: "number"
-            default: "9001"
-      
-      - name: "update"
-        parameter: "update"
-        description: "Update Portainer Agent"
-        prompts:
-          - question: "Agent port? (default: 9001)"
-            variable: "AGENT_PORT"
-            type: "number"
-            default: "9001"
-      
-      - name: "uninstall"
-        parameter: "uninstall"
-        description: "Uninstall Portainer Agent"
-        prompts:
-          - question: "Delete agent data?"
-            variable: "DELETE_DATA"
-            type: "yes/no"
-            default: "no"
-
   linux:
     description: "Linux system configuration"
     category: "System"
@@ -585,6 +504,25 @@ scripts:
             variable: "GROUPNAME"
             type: "text"
             default: ""
+      
+      - name: "ca-cert"
+        parameter: "ca-cert"
+        description: "Install CA certificate from a server"
+        prompts:
+          - question: "CA server hostname? (e.g., cert.my.lan)"
+            variable: "SERVER"
+            type: "text"
+            default: "cert.my.lan"
+      
+      - name: "install-zip"
+        parameter: "install-zip"
+        description: "Install zip and unzip"
+        prompts: []
+      
+      - name: "uninstall-zip"
+        parameter: "uninstall-zip"
+        description: "Uninstall zip and unzip"
+        prompts: []
 
   proxmox:
     description: "Proxmox VE management"

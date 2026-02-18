@@ -1,5 +1,7 @@
 # Custom user scripts and configuration
 custom/
+!custom/repo.yaml
+!custom/demo-scripts/
 custom.yaml
 
 # Logs
