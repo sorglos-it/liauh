@@ -184,9 +184,9 @@ install_remotely() {
     # Prompt for configuration
     log_info_blue "Enter Remotely configuration:"
     
-    read -p "  HostName (e.g., http://10.2.3.104:5000): " HOSTNAME
-    if [[ -z "$HOSTNAME" ]]; then
-        log_error "HostName cannot be empty"
+    read -p "  Remotely Server URL (e.g., http://remotely.example.com:5000): " REMOTELY_SERVER
+    if [[ -z "$REMOTELY_SERVER" ]]; then
+        log_error "Remotely Server URL cannot be empty"
     fi
     
     read -p "  OrganizationID (UUID format): " ORGANIZATION_ID
@@ -230,8 +230,8 @@ install_remotely() {
     log_info "Downloading Remotely agent..."
     
     TEMP_ZIP="/tmp/Remotely-Linux.zip"
-    if ! curl -sSL "$HOSTNAME/Content/Remotely-Linux.zip" -o "$TEMP_ZIP"; then
-        log_error "Failed to download Remotely agent from $HOSTNAME"
+    if ! curl -sSL "$REMOTELY_SERVER/Content/Remotely-Linux.zip" -o "$TEMP_ZIP"; then
+        log_error "Failed to download Remotely agent from $REMOTELY_SERVER"
     fi
     
     if [[ ! -f "$TEMP_ZIP" ]]; then
@@ -239,7 +239,15 @@ install_remotely() {
     fi
     
     log_info "Extracting Remotely agent..."
-    sudo unzip -o "$TEMP_ZIP" -d "$INSTALL_DIR" || log_error "Failed to extract Remotely agent"
+    if ! sudo unzip -o "$TEMP_ZIP" -d "$INSTALL_DIR" 2>&1 | tail -5; then
+        log_warn "unzip command encountered issues, checking if files were extracted..."
+    fi
+    
+    # Verify extraction by checking for main executable
+    if [[ ! -f "$INSTALL_DIR/Remotely_Agent" ]]; then
+        log_error "Failed to extract Remotely agent - Remotely_Agent not found"
+    fi
+    
     rm -f "$TEMP_ZIP"
     
     # Make executables
@@ -251,7 +259,7 @@ install_remotely() {
     
     CONNECTION_JSON="{
   \"DeviceID\": \"$DEVICE_ID\",
-  \"Host\": \"$HOSTNAME\",
+  \"Host\": \"$REMOTELY_SERVER\",
   \"OrganizationID\": \"$ORGANIZATION_ID\",
   \"ServerVerificationToken\": \"\"
 }"
@@ -302,7 +310,7 @@ WantedBy=multi-user.target"
     echo ""
     echo "  Connection Details:"
     echo "  ├─ DeviceID: $DEVICE_ID"
-    echo "  ├─ HostName: $HOSTNAME"
+    echo "  ├─ Remotely Server: $REMOTELY_SERVER"
     echo "  ├─ OrganizationID: $ORGANIZATION_ID"
     echo "  └─ Config: $CONFIG_FILE"
     echo ""
@@ -330,10 +338,10 @@ update_remotely() {
         log_error "Configuration file not found: $CONFIG_FILE"
     fi
     
-    HOSTNAME=$(jq -r '.Host' "$CONFIG_FILE")
+    REMOTELY_SERVER=$(jq -r '.Host' "$CONFIG_FILE")
     
-    if [[ -z "$HOSTNAME" ]] || [[ "$HOSTNAME" == "null" ]]; then
-        log_error "Cannot determine HostName from configuration"
+    if [[ -z "$REMOTELY_SERVER" ]] || [[ "$REMOTELY_SERVER" == "null" ]]; then
+        log_error "Cannot determine Remotely server address from configuration"
     fi
     
     # Update package manager
@@ -345,7 +353,7 @@ update_remotely() {
     log_info "Downloading latest Remotely agent..."
     
     TEMP_ZIP="/tmp/Remotely-Linux-update.zip"
-    if ! curl -sSL "$HOSTNAME/Content/Remotely-Linux.zip" -o "$TEMP_ZIP"; then
+    if ! curl -sSL "$REMOTELY_SERVER/Content/Remotely-Linux.zip" -o "$TEMP_ZIP"; then
         log_error "Failed to download Remotely agent"
     fi
     
@@ -462,17 +470,17 @@ config_remotely() {
     
     DEVICE_ID=$(jq -r '.DeviceID' "$CONFIG_FILE")
     SERVER_TOKEN=$(jq -r '.ServerVerificationToken' "$CONFIG_FILE")
-    CURRENT_HOST=$(jq -r '.Host' "$CONFIG_FILE")
+    CURRENT_REMOTELY_SERVER=$(jq -r '.Host' "$CONFIG_FILE")
     CURRENT_ORG=$(jq -r '.OrganizationID' "$CONFIG_FILE")
     
     echo "  DeviceID: $DEVICE_ID"
-    echo "  HostName: $CURRENT_HOST"
+    echo "  Remotely Server: $CURRENT_REMOTELY_SERVER"
     echo "  OrganizationID: $CURRENT_ORG"
     echo ""
     
     # Prompt for new values
-    read -p "New HostName (press Enter to keep current): " NEW_HOST
-    NEW_HOST="${NEW_HOST:-$CURRENT_HOST}"
+    read -p "New Remotely Server URL (press Enter to keep current): " NEW_REMOTELY_SERVER
+    NEW_REMOTELY_SERVER="${NEW_REMOTELY_SERVER:-$CURRENT_REMOTELY_SERVER}"
     
     read -p "New OrganizationID (press Enter to keep current): " NEW_ORG
     NEW_ORG="${NEW_ORG:-$CURRENT_ORG}"
@@ -486,7 +494,7 @@ config_remotely() {
     
     NEW_CONFIG=$(jq \
         --arg deviceid "$DEVICE_ID" \
-        --arg host "$NEW_HOST" \
+        --arg host "$NEW_REMOTELY_SERVER" \
         --arg orgid "$NEW_ORG" \
         --arg token "$SERVER_TOKEN" \
         '{DeviceID: $deviceid, Host: $host, OrganizationID: $orgid, ServerVerificationToken: $token}' \
@@ -508,7 +516,7 @@ config_remotely() {
     
     log_info_blue "New configuration:"
     echo "  DeviceID: $DEVICE_ID"
-    echo "  HostName: $NEW_HOST"
+    echo "  Remotely Server: $NEW_REMOTELY_SERVER"
     echo "  OrganizationID: $NEW_ORG"
 }
 
