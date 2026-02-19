@@ -115,10 +115,11 @@ liauh/
 
 - ✅ Debian / Ubuntu / Linux Mint
 - ✅ Red Hat / Fedora / CentOS / Rocky / AlmaLinux
-- ✅ Arch / Manjaro / PiKVM v3
+- ✅ Arch / Manjaro
 - ✅ SUSE / openSUSE
 - ✅ Alpine
 - ✅ Proxmox VE
+- ⚠️ PiKVM v3 (Arch-based appliance, limited package management)
 
 ## 💾 Requirements
 
