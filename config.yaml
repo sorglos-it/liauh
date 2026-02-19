@@ -707,6 +707,38 @@ scripts:
       - name: "list-lxc-running"
         parameter: "list-lxc-running"
         description: "List only running LXC containers with VMID, Hostname, and live IP (from eth0)"
+      - name: "start-vm"
+        parameter: "start-vm"
+        description: "Start a specific VM by VMID"
+        prompts:
+          - question: "VM ID (VMID)?"
+            variable: "VMID"
+            type: "number"
+            default: ""
+      - name: "stop-vm"
+        parameter: "stop-vm"
+        description: "Stop a specific VM by VMID"
+        prompts:
+          - question: "VM ID (VMID)?"
+            variable: "VMID"
+            type: "number"
+            default: ""
+      - name: "start-lxc"
+        parameter: "start-lxc"
+        description: "Start a specific LXC container by CTID"
+        prompts:
+          - question: "Container ID (CTID)?"
+            variable: "CTID"
+            type: "number"
+            default: ""
+      - name: "stop-lxc"
+        parameter: "stop-lxc"
+        description: "Stop a specific LXC container by CTID"
+        prompts:
+          - question: "Container ID (CTID)?"
+            variable: "CTID"
+            type: "number"
+            default: ""
 
   docker-compose:
     description: "Docker Compose multi-container orchestration"

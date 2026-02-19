@@ -296,6 +296,82 @@ list_running_lxc() {
     echo "-------------------------------------------"
 }
 
+# Start a specific VM by VMID
+start_vm() {
+    check_proxmox_host
+    
+    read -p "Enter VM ID (VMID): " VMID
+    
+    if [[ -z "$VMID" ]]; then
+        log_error "VM ID cannot be empty"
+    fi
+    
+    log_info "Starting VM $VMID..."
+    
+    if $SUDO_PREFIX qm start "$VMID"; then
+        log_info "VM $VMID started successfully"
+    else
+        log_error "Failed to start VM $VMID"
+    fi
+}
+
+# Stop a specific VM by VMID
+stop_vm() {
+    check_proxmox_host
+    
+    read -p "Enter VM ID (VMID): " VMID
+    
+    if [[ -z "$VMID" ]]; then
+        log_error "VM ID cannot be empty"
+    fi
+    
+    log_info "Stopping VM $VMID..."
+    
+    if $SUDO_PREFIX qm stop "$VMID"; then
+        log_info "VM $VMID stopped successfully"
+    else
+        log_error "Failed to stop VM $VMID"
+    fi
+}
+
+# Start a specific LXC container by CTID
+start_lxc() {
+    check_proxmox_host
+    
+    read -p "Enter container ID (CTID): " CTID
+    
+    if [[ -z "$CTID" ]]; then
+        log_error "Container ID cannot be empty"
+    fi
+    
+    log_info "Starting LXC container $CTID..."
+    
+    if $SUDO_PREFIX pct start "$CTID"; then
+        log_info "LXC container $CTID started successfully"
+    else
+        log_error "Failed to start LXC container $CTID"
+    fi
+}
+
+# Stop a specific LXC container by CTID
+stop_lxc() {
+    check_proxmox_host
+    
+    read -p "Enter container ID (CTID): " CTID
+    
+    if [[ -z "$CTID" ]]; then
+        log_error "Container ID cannot be empty"
+    fi
+    
+    log_info "Stopping LXC container $CTID..."
+    
+    if $SUDO_PREFIX pct stop "$CTID"; then
+        log_info "LXC container $CTID stopped successfully"
+    else
+        log_error "Failed to stop LXC container $CTID"
+    fi
+}
+
 # Route to appropriate action
 case "$ACTION" in
     install)
@@ -324,6 +400,18 @@ case "$ACTION" in
         ;;
     list-lxc-running)
         list_running_lxc
+        ;;
+    start-vm)
+        start_vm
+        ;;
+    stop-vm)
+        stop_vm
+        ;;
+    start-lxc)
+        start_lxc
+        ;;
+    stop-lxc)
+        stop_lxc
         ;;
     *)
         log_error "Unknown action: $ACTION"

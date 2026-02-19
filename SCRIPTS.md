@@ -73,7 +73,7 @@ Container runtime, VM management, and orchestration platforms:
 | **docker** | Docker container runtime | All 5 distros |
 | **portainer** | Portainer container management UI | All 5 distros |
 | **docker-compose** | Docker Compose multi-container orchestration | All 5 distros |
-| **proxmox** | Proxmox guest agent and container management (install, update, uninstall, make-lxc-to-template, make-template-to-lxc, unlock-vm, stop-all, list-lxc, list-lxc-running) | Proxmox only |
+| **proxmox** | Proxmox guest agent and container management (install, update, uninstall, make-lxc-to-template, make-template-to-lxc, unlock-vm, stop-all, list-lxc, list-lxc-running, start-vm, stop-vm, start-lxc, stop-lxc) | Proxmox only |
 
 ---
 
