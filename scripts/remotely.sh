@@ -1,0 +1,538 @@
+#!/bin/bash
+
+# remotely - Remote desktop and support software
+# Install and manage Remotely - open-source remote desktop and remote support tool
+
+set -e
+
+# Parse action and parameters
+FULL_PARAMS="$1"
+ACTION="${FULL_PARAMS%%,*}"
+PARAMS_REST="${FULL_PARAMS#*,}"
+
+# Export any additional parameters
+if [[ -n "$PARAMS_REST" && "$PARAMS_REST" != "$FULL_PARAMS" ]]; then
+    while IFS='=' read -r key val; do
+        [[ -n "$key" ]] && export "$key=$val"
+    done <<< "${PARAMS_REST//,/$'\n'}"
+fi
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+# Installation directory and config file
+INSTALL_DIR="/usr/local/bin/Remotely"
+CONFIG_FILE="$INSTALL_DIR/ConnectionInfo.json"
+LOG_DIR="/var/log/remotely"
+SERVICE_FILE="/etc/systemd/system/remotely.service"
+
+# Log informational messages with green checkmark
+log_info() {
+    printf "${GREEN}✓${NC} %s\n" "$1"
+}
+
+# Log warning messages with yellow exclamation
+log_warn() {
+    printf "${YELLOW}⚠${NC} %s\n" "$1"
+}
+
+# Log error messages with red X and exit
+log_error() {
+    printf "${RED}✗${NC} %s\n" "$1"
+    exit 1
+}
+
+# Log blue informational messages
+log_info_blue() {
+    printf "${BLUE}ℹ${NC} %s\n" "$1"
+}
+
+# Detect operating system and set appropriate package manager commands
+detect_os() {
+    source /etc/os-release || log_error "Cannot detect OS"
+    
+    OS_DISTRO="${ID,,}"
+    OS_VERSION="${VERSION_ID}"
+    
+    # Map distro to Microsoft repo format
+    case "$OS_DISTRO" in
+        ubuntu)
+            MS_REPO_DISTRO="ubuntu"
+            PKG_UPDATE="apt-get update"
+            PKG_INSTALL="apt-get install -y"
+            PKG_UNINSTALL="apt-get remove -y"
+            PKG_TYPE="deb"
+            ;;
+        debian)
+            MS_REPO_DISTRO="debian"
+            PKG_UPDATE="apt-get update"
+            PKG_INSTALL="apt-get install -y"
+            PKG_UNINSTALL="apt-get remove -y"
+            PKG_TYPE="deb"
+            ;;
+        raspbian|linuxmint|pop)
+            log_error "Distribution '$OS_DISTRO' uses Debian-based packages but may need custom setup"
+            ;;
+        rhel|centos)
+            MS_REPO_DISTRO="${OS_DISTRO}"
+            PKG_UPDATE="dnf check-update || true"
+            PKG_INSTALL="dnf install -y"
+            PKG_UNINSTALL="dnf remove -y"
+            PKG_TYPE="rpm"
+            ;;
+        rocky)
+            MS_REPO_DISTRO="rocky"
+            PKG_UPDATE="dnf check-update || true"
+            PKG_INSTALL="dnf install -y"
+            PKG_UNINSTALL="dnf remove -y"
+            PKG_TYPE="rpm"
+            ;;
+        alma)
+            MS_REPO_DISTRO="alma"
+            PKG_UPDATE="dnf check-update || true"
+            PKG_INSTALL="dnf install -y"
+            PKG_UNINSTALL="dnf remove -y"
+            PKG_TYPE="rpm"
+            ;;
+        fedora)
+            MS_REPO_DISTRO="fedora"
+            PKG_UPDATE="dnf check-update || true"
+            PKG_INSTALL="dnf install -y"
+            PKG_UNINSTALL="dnf remove -y"
+            PKG_TYPE="rpm"
+            ;;
+        opensuse*|sles)
+            MS_REPO_DISTRO="opensuse"
+            PKG_UPDATE="zypper refresh"
+            PKG_INSTALL="zypper install -y"
+            PKG_UNINSTALL="zypper remove -y"
+            PKG_TYPE="rpm"
+            ;;
+        amzn)
+            MS_REPO_DISTRO="amazonlinux"
+            PKG_UPDATE="yum check-update || true"
+            PKG_INSTALL="yum install -y"
+            PKG_UNINSTALL="yum remove -y"
+            PKG_TYPE="rpm"
+            ;;
+        arch|manjaro|endeavouros|alpine)
+            log_error "Distribution '$OS_DISTRO' is not supported by Remotely. Please install manually or use Docker."
+            ;;
+        *)
+            log_error "Unsupported distribution: $OS_DISTRO"
+            ;;
+    esac
+}
+
+# Install Microsoft GPG key and add repository
+setup_microsoft_repo() {
+    log_info "Setting up Microsoft package repository..."
+    
+    if [[ "$PKG_TYPE" == "deb" ]]; then
+        # Debian/Ubuntu
+        curl -sSL "https://packages.microsoft.com/keys/microsoft.asc" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
+        
+        MS_REPO_URL="https://packages.microsoft.com/config/$MS_REPO_DISTRO/$OS_VERSION/packages-microsoft-prod.deb"
+        
+        log_info "Downloading Microsoft repository package..."
+        sudo curl -sSL "$MS_REPO_URL" -o /tmp/packages-microsoft-prod.deb
+        
+        sudo dpkg -i /tmp/packages-microsoft-prod.deb || log_error "Failed to install Microsoft repository"
+        rm -f /tmp/packages-microsoft-prod.deb
+        
+    else
+        # RedHat-based
+        MS_REPO_URL="https://packages.microsoft.com/config/$MS_REPO_DISTRO/$OS_VERSION/packages-microsoft-prod.rpm"
+        
+        log_info "Downloading Microsoft repository package..."
+        sudo curl -sSL "$MS_REPO_URL" -o /tmp/packages-microsoft-prod.rpm
+        
+        sudo rpm -ivh /tmp/packages-microsoft-prod.rpm || log_error "Failed to install Microsoft repository"
+        rm -f /tmp/packages-microsoft-prod.rpm
+    fi
+    
+    log_info "Microsoft repository configured"
+}
+
+# Generate UUID for device ID
+generate_uuid() {
+    if [[ -f /proc/sys/kernel/random/uuid ]]; then
+        cat /proc/sys/kernel/random/uuid
+    else
+        python3 -c "import uuid; print(str(uuid.uuid4()))" 2>/dev/null || \
+        perl -e 'use Digest::MD5 qw(md5_hex); print substr(md5_hex(rand()), 0, 32);' 2>/dev/null || \
+        openssl rand -hex 16 2>/dev/null || \
+        echo "$(date +%s)-$(shuf -i 100000-999999 -n 1)"
+    fi
+}
+
+# Install Remotely
+install_remotely() {
+    log_info "Installing Remotely..."
+    
+    # Check if running as root
+    if [[ $EUID -ne 0 ]]; then
+        log_error "This script must be run with sudo"
+    fi
+    
+    detect_os
+    
+    # Prompt for configuration
+    log_info_blue "Enter Remotely configuration:"
+    
+    read -p "  HostName (e.g., http://10.2.3.104:5000): " HOSTNAME
+    if [[ -z "$HOSTNAME" ]]; then
+        log_error "HostName cannot be empty"
+    fi
+    
+    read -p "  OrganizationID (UUID format): " ORGANIZATION_ID
+    if [[ -z "$ORGANIZATION_ID" ]]; then
+        log_error "OrganizationID cannot be empty"
+    fi
+    
+    # Update package manager and install repository
+    sudo $PKG_UPDATE || true
+    setup_microsoft_repo
+    sudo $PKG_UPDATE || true
+    
+    # Install required dependencies
+    log_info "Installing dependencies..."
+    
+    if [[ "$PKG_TYPE" == "deb" ]]; then
+        sudo $PKG_INSTALL apt-transport-https
+        sudo $PKG_INSTALL dotnet-runtime-8.0 || log_error "Failed to install .NET runtime"
+        sudo $PKG_INSTALL libx11-dev libxrandr-dev libxtst-dev libxcb-shape0 xclip unzip jq curl || log_error "Failed to install dependencies"
+    else
+        sudo $PKG_INSTALL dotnet-runtime-8.0 || log_error "Failed to install .NET runtime"
+        sudo $PKG_INSTALL libX11-devel libXrandr-devel libXtst-devel libxcb-devel xclip unzip jq curl || log_error "Failed to install dependencies"
+    fi
+    
+    # Generate device ID or use existing one
+    DEVICE_ID=""
+    if [[ -f "$CONFIG_FILE" ]]; then
+        log_info "Existing configuration found, preserving device ID..."
+        DEVICE_ID=$(jq -r '.DeviceID' "$CONFIG_FILE" 2>/dev/null || echo "")
+    fi
+    
+    if [[ -z "$DEVICE_ID" ]]; then
+        DEVICE_ID=$(generate_uuid)
+    fi
+    
+    # Create installation directory
+    sudo mkdir -p "$INSTALL_DIR"
+    sudo mkdir -p "$LOG_DIR"
+    
+    # Download and extract Remotely
+    log_info "Downloading Remotely agent..."
+    
+    TEMP_ZIP="/tmp/Remotely-Linux.zip"
+    if ! curl -sSL "$HOSTNAME/Content/Remotely-Linux.zip" -o "$TEMP_ZIP"; then
+        log_error "Failed to download Remotely agent from $HOSTNAME"
+    fi
+    
+    if [[ ! -f "$TEMP_ZIP" ]]; then
+        log_error "Download failed: $TEMP_ZIP not found"
+    fi
+    
+    log_info "Extracting Remotely agent..."
+    sudo unzip -o "$TEMP_ZIP" -d "$INSTALL_DIR" || log_error "Failed to extract Remotely agent"
+    rm -f "$TEMP_ZIP"
+    
+    # Make executables
+    sudo chmod +x "$INSTALL_DIR/Remotely_Agent" || true
+    sudo chmod +x "$INSTALL_DIR/Desktop/Remotely_Desktop" || true
+    
+    # Create connection info JSON
+    log_info "Creating connection configuration..."
+    
+    CONNECTION_JSON="{
+  \"DeviceID\": \"$DEVICE_ID\",
+  \"Host\": \"$HOSTNAME\",
+  \"OrganizationID\": \"$ORGANIZATION_ID\",
+  \"ServerVerificationToken\": \"\"
+}"
+    
+    echo "$CONNECTION_JSON" | sudo tee "$CONFIG_FILE" > /dev/null
+    sudo chmod 600 "$CONFIG_FILE"
+    
+    # Create systemd service file
+    log_info "Creating systemd service..."
+    
+    SERVICE_CONTENT="[Unit]
+Description=Remotely agent for remote access and support
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=$INSTALL_DIR
+ExecStart=$INSTALL_DIR/Remotely_Agent
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=0
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=remotely-agent
+
+[Install]
+WantedBy=multi-user.target"
+    
+    echo "$SERVICE_CONTENT" | sudo tee "$SERVICE_FILE" > /dev/null
+    sudo systemctl daemon-reload
+    
+    # Enable and start service
+    log_info "Enabling and starting Remotely service..."
+    sudo systemctl enable remotely
+    sudo systemctl start remotely
+    
+    # Verify installation
+    sleep 2
+    if sudo systemctl is-active --quiet remotely; then
+        log_info "Remotely service started successfully!"
+    else
+        log_warn "Remotely service did not start. Check logs with: journalctl -u remotely -n 50"
+    fi
+    
+    # Display connection info
+    log_info_blue "Remotely installation complete!"
+    echo ""
+    echo "  Connection Details:"
+    echo "  ├─ DeviceID: $DEVICE_ID"
+    echo "  ├─ HostName: $HOSTNAME"
+    echo "  ├─ OrganizationID: $ORGANIZATION_ID"
+    echo "  └─ Config: $CONFIG_FILE"
+    echo ""
+    echo "  Status: sudo systemctl status remotely"
+    echo "  Logs:   journalctl -u remotely -f"
+}
+
+# Update Remotely
+update_remotely() {
+    log_info "Updating Remotely..."
+    
+    # Check if running as root
+    if [[ $EUID -ne 0 ]]; then
+        log_error "This script must be run with sudo"
+    fi
+    
+    detect_os
+    
+    if [[ ! -d "$INSTALL_DIR" ]]; then
+        log_error "Remotely is not installed at $INSTALL_DIR"
+    fi
+    
+    # Read existing configuration
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+        log_error "Configuration file not found: $CONFIG_FILE"
+    fi
+    
+    HOSTNAME=$(jq -r '.Host' "$CONFIG_FILE")
+    
+    if [[ -z "$HOSTNAME" ]] || [[ "$HOSTNAME" == "null" ]]; then
+        log_error "Cannot determine HostName from configuration"
+    fi
+    
+    # Update package manager
+    sudo $PKG_UPDATE || true
+    setup_microsoft_repo
+    sudo $PKG_UPDATE || true
+    
+    # Download latest agent
+    log_info "Downloading latest Remotely agent..."
+    
+    TEMP_ZIP="/tmp/Remotely-Linux-update.zip"
+    if ! curl -sSL "$HOSTNAME/Content/Remotely-Linux.zip" -o "$TEMP_ZIP"; then
+        log_error "Failed to download Remotely agent"
+    fi
+    
+    # Backup current installation
+    log_info "Backing up current installation..."
+    sudo cp -r "$INSTALL_DIR" "${INSTALL_DIR}.backup"
+    
+    # Extract and update
+    log_info "Extracting updated agent..."
+    sudo unzip -o "$TEMP_ZIP" -d "$INSTALL_DIR" || {
+        log_warn "Extraction failed, restoring backup..."
+        sudo rm -rf "$INSTALL_DIR"
+        sudo mv "${INSTALL_DIR}.backup" "$INSTALL_DIR"
+        log_error "Update failed"
+    }
+    
+    rm -f "$TEMP_ZIP"
+    
+    # Make executables
+    sudo chmod +x "$INSTALL_DIR/Remotely_Agent" || true
+    sudo chmod +x "$INSTALL_DIR/Desktop/Remotely_Desktop" || true
+    
+    # Remove backup
+    sudo rm -rf "${INSTALL_DIR}.backup"
+    
+    # Restart service
+    log_info "Restarting Remotely service..."
+    sudo systemctl restart remotely
+    
+    sleep 2
+    if sudo systemctl is-active --quiet remotely; then
+        log_info "Remotely updated successfully!"
+    else
+        log_warn "Remotely service did not start. Check logs with: journalctl -u remotely -n 50"
+    fi
+}
+
+# Uninstall Remotely
+uninstall_remotely() {
+    log_info "Uninstalling Remotely..."
+    
+    # Check if running as root
+    if [[ $EUID -ne 0 ]]; then
+        log_error "This script must be run with sudo"
+    fi
+    
+    # Confirmation prompt
+    read -p "Are you sure you want to uninstall Remotely? (yes/no): " CONFIRM
+    if [[ "$CONFIRM" != "yes" ]]; then
+        log_info "Uninstall cancelled"
+        return
+    fi
+    
+    # Ask about keeping config files
+    read -p "Keep configuration files? (yes/no): " KEEP_CONFIG
+    
+    # Stop and disable service
+    log_info "Stopping Remotely service..."
+    sudo systemctl stop remotely || true
+    sudo systemctl disable remotely || true
+    
+    # Remove service file
+    sudo rm -f "$SERVICE_FILE"
+    sudo systemctl daemon-reload
+    
+    # Remove installation
+    if [[ "$KEEP_CONFIG" == "yes" ]]; then
+        log_info "Keeping configuration files at: $CONFIG_FILE"
+        sudo rm -rf "$INSTALL_DIR"/*
+        # Restore just the config
+        sudo cp "$CONFIG_FILE" /tmp/ConnectionInfo.json.bak || true
+        sudo rm -rf "$INSTALL_DIR"
+        sudo mkdir -p "$INSTALL_DIR"
+        sudo mv /tmp/ConnectionInfo.json.bak "$CONFIG_FILE" || true
+    else
+        log_info "Removing installation and configuration..."
+        sudo rm -rf "$INSTALL_DIR"
+    fi
+    
+    # Ask about removing Microsoft repository
+    read -p "Remove Microsoft package repository? (yes/no): " REMOVE_REPO
+    if [[ "$REMOVE_REPO" == "yes" ]]; then
+        log_info "Removing Microsoft repository..."
+        
+        detect_os
+        
+        if [[ "$PKG_TYPE" == "deb" ]]; then
+            sudo apt-key del "BC528686B50D79E339D3721CEB3E94ADBE1229CF" || true
+            sudo rm -f /usr/share/keyrings/microsoft-archive-keyring.gpg
+            sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+        else
+            sudo rpm --erase packages-microsoft-prod || true
+        fi
+    fi
+    
+    log_info "Remotely uninstalled successfully!"
+}
+
+# Reconfigure Remotely connection settings
+config_remotely() {
+    log_info "Reconfiguring Remotely..."
+    
+    # Check if running as root
+    if [[ $EUID -ne 0 ]]; then
+        log_error "This script must be run with sudo"
+    fi
+    
+    if [[ ! -f "$CONFIG_FILE" ]]; then
+        log_error "Configuration file not found: $CONFIG_FILE"
+    fi
+    
+    # Read current configuration
+    log_info_blue "Current configuration:"
+    
+    DEVICE_ID=$(jq -r '.DeviceID' "$CONFIG_FILE")
+    SERVER_TOKEN=$(jq -r '.ServerVerificationToken' "$CONFIG_FILE")
+    CURRENT_HOST=$(jq -r '.Host' "$CONFIG_FILE")
+    CURRENT_ORG=$(jq -r '.OrganizationID' "$CONFIG_FILE")
+    
+    echo "  DeviceID: $DEVICE_ID"
+    echo "  HostName: $CURRENT_HOST"
+    echo "  OrganizationID: $CURRENT_ORG"
+    echo ""
+    
+    # Prompt for new values
+    read -p "New HostName (press Enter to keep current): " NEW_HOST
+    NEW_HOST="${NEW_HOST:-$CURRENT_HOST}"
+    
+    read -p "New OrganizationID (press Enter to keep current): " NEW_ORG
+    NEW_ORG="${NEW_ORG:-$CURRENT_ORG}"
+    
+    # Backup configuration
+    log_info "Backing up configuration..."
+    sudo cp "$CONFIG_FILE" "${CONFIG_FILE}.backup"
+    
+    # Update JSON with new values while preserving DeviceID and ServerVerificationToken
+    log_info "Updating configuration..."
+    
+    NEW_CONFIG=$(jq \
+        --arg deviceid "$DEVICE_ID" \
+        --arg host "$NEW_HOST" \
+        --arg orgid "$NEW_ORG" \
+        --arg token "$SERVER_TOKEN" \
+        '{DeviceID: $deviceid, Host: $host, OrganizationID: $orgid, ServerVerificationToken: $token}' \
+        <<< '{}')
+    
+    echo "$NEW_CONFIG" | sudo tee "$CONFIG_FILE" > /dev/null
+    sudo chmod 600 "$CONFIG_FILE"
+    
+    # Restart service
+    log_info "Restarting Remotely service..."
+    sudo systemctl restart remotely
+    
+    sleep 2
+    if sudo systemctl is-active --quiet remotely; then
+        log_info "Configuration updated successfully!"
+    else
+        log_warn "Service did not start. Check logs with: journalctl -u remotely -n 50"
+    fi
+    
+    log_info_blue "New configuration:"
+    echo "  DeviceID: $DEVICE_ID"
+    echo "  HostName: $NEW_HOST"
+    echo "  OrganizationID: $NEW_ORG"
+}
+
+# Route to appropriate action
+case "$ACTION" in
+    install)
+        install_remotely
+        ;;
+    update)
+        update_remotely
+        ;;
+    uninstall)
+        uninstall_remotely
+        ;;
+    config)
+        config_remotely
+        ;;
+    *)
+        log_error "Unknown action: $ACTION"
+        echo "Usage:"
+        echo "  remotely.sh install     - Install Remotely"
+        echo "  remotely.sh update      - Update Remotely"
+        echo "  remotely.sh uninstall   - Uninstall Remotely"
+        echo "  remotely.sh config      - Reconfigure connection settings"
+        exit 1
+        ;;
+esac

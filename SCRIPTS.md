@@ -1,12 +1,12 @@
 # LIAUH Scripts Reference
 
-**v0.4+** | Complete catalog of 44 system management scripts
+**v0.4+** | Complete catalog of 45 system management scripts
 
 All scripts support **install**, **update**, **uninstall**, and **config** actions (where applicable).
 
 ---
 
-## Script Categories (8 Categories, 44 Scripts)
+## Script Categories (8 Categories, 45 Scripts)
 
 LIAUH organizes scripts into 8 logical categories:
 
@@ -17,7 +17,7 @@ LIAUH organizes scripts into 8 logical categories:
 5. **Programming Languages** (6)
 6. **Logging & Monitoring** (4)
 7. **Networking** (10)
-8. **System Management** (5)
+8. **System Management** (6)
 
 ---
 
@@ -123,7 +123,7 @@ Network tools, VPN, DNS ad-blocking, file sharing, and connectivity:
 
 ---
 
-## System Management (5)
+## System Management (6)
 
 OS-level management and specialized appliances:
 
@@ -134,6 +134,7 @@ OS-level management and specialized appliances:
 | **debian** | Debian-specific system management | Debian only |
 | **proxmox** | Proxmox VE virtualization platform management | Proxmox only |
 | **pikvm-v3** | PiKVM v3 appliance configuration and management | Arch (PiKVM) only |
+| **remotely** | Remotely remote desktop and support software | Debian, Ubuntu, RHEL, CentOS, Rocky, Alma, Fedora, openSUSE, SLES, Amazon Linux |
 
 ---
 

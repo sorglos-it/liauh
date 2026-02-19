@@ -1,11 +1,11 @@
 # LIAUH - Project Memory
 
-**v0.4** | 44 production scripts with unified system management framework
+**v0.4** | 45 production scripts with unified system management framework
 
 ## Current Status
 
 - **Status**: Stable & Maintained
-- **Scripts**: 44 system management scripts
+- **Scripts**: 45 system management scripts
 - **Last Update**: 2026-02-18
 
 ## Architecture
@@ -20,7 +20,7 @@ liauh/
 │   ├── menu.sh          # Menu display + navigation
 │   ├── execute.sh       # Script execution engine
 │   └── repos.sh         # Repository sync + management
-├── scripts/             # 44 system management scripts
+├── scripts/             # 45 system management scripts
 ├── custom/              # User repositories (git-ignored except repo.yaml)
 ├── config.yaml          # System scripts configuration
 ├── README.md            # Quick start guide
@@ -39,7 +39,7 @@ liauh/
 - ✅ Proxmox VE
 - ✅ PiKVM v3
 
-## v0.4 - 44 Scripts Implemented & Tested
+## v0.4 - 45 Scripts Implemented & Tested
 
 ### Script Categories (8 Categories)
 
@@ -64,12 +64,12 @@ liauh/
 7. **Networking** (10)
    - OpenSSH, net-tools, bind-utils, WireGuard, OpenVPN, UFW, Pi-hole, AdGuard Home, Samba, cifs-utils
 
-8. **System Management** (5)
-   - Linux (network, DNS, users, groups), Ubuntu, Debian, Proxmox, PiKVM v3
+8. **System Management** (6)
+   - Linux (network, DNS, users, groups), Ubuntu, Debian, Proxmox, PiKVM v3, Remotely
 
 ### Testing Status
-- **Total Scripts**: 44
-- **Tested**: 44/44 ✓
+- **Total Scripts**: 45
+- **Tested**: 45/45 ✓
 - **All Distro Support**: 5 major families covered
 
 ## Key Features
@@ -122,8 +122,10 @@ SSH keys stored in `custom/keys/` (protected by .gitignore)
 - Updated Essential Tools category: 10 → 11 scripts
 - Added cifs-utils for SMB/CIFS share mounting
 - Updated Networking category: 9 → 10 scripts
-- Total script count: 43 → 44
-- Enhanced networking and file sharing capabilities
+- Added Remotely remote desktop and support software
+- Updated System Management category: 5 → 6 scripts
+- Total script count: 43 → 44 → 45
+- Enhanced networking, file sharing, and remote support capabilities
 - All documentation updated
 
 ## Security Notes

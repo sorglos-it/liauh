@@ -1224,3 +1224,23 @@ scripts:
         parameter: "vnc-enable"
         description: "Enable VNC server"
 
+  remotely:
+    description: "Remotely - open-source remote desktop and support software"
+    category: "System Management"
+    file: "remotely.sh"
+    needs_sudo: true
+    os_family: [debian, redhat]
+    actions:
+      - name: "install"
+        parameter: "install"
+        description: "Install Remotely"
+      - name: "update"
+        parameter: "update"
+        description: "Update Remotely"
+      - name: "uninstall"
+        parameter: "uninstall"
+        description: "Uninstall Remotely"
+      - name: "config"
+        parameter: "config"
+        description: "Reconfigure Remotely connection settings"
+
