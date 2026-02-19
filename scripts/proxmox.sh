@@ -162,52 +162,6 @@ list_all_lxc() {
     log_info "List complete"
 }
 
-# List running LXC containers with live IP from eth0
-list_running_lxc() {
-    log_info "Listing running LXC containers..."
-    
-    # Check if pct command exists (Proxmox VE command)
-    if ! command -v pct &> /dev/null; then
-        log_error "Proxmox VE not installed or pct command not found"
-    fi
-    
-    # Display header and separator
-    printf "\n"
-    printf "%-8s %-20s %-20s\n" "VMID" "HOSTNAME" "LIVE IP"
-    printf "%s\n" "========================================================"
-    
-    # Get running LXC containers only
-    local containers=$(sudo pct list 2>/dev/null | grep "running" | tail -n +1)
-    
-    # Check if there are any running containers
-    if [[ -z "$containers" ]]; then
-        log_info "No running LXC containers found"
-        printf "\n"
-        return 0
-    fi
-    
-    # Parse and display each running container
-    while IFS= read -r line; do
-        local vmid=$(echo "$line" | awk '{print $1}')
-        
-        # Get hostname from container config
-        local hostname=$(sudo pct config "$vmid" 2>/dev/null | grep "^hostname:" | awk '{print $2}' || echo "N/A")
-        
-        # Get live IP from eth0 interface using pct exec
-        local ip="N/A"
-        if sudo pct exec "$vmid" ip addr show eth0 &>/dev/null 2>&1; then
-            ip=$(sudo pct exec "$vmid" ip addr show eth0 2>/dev/null | grep "inet " | awk '{print $2}' | cut -d/ -f1 || echo "N/A")
-        fi
-        
-        # Format and display the row
-        printf "%-8s %-20s %-20s\n" "$vmid" "$hostname" "$ip"
-    done <<< "$containers"
-    
-    printf "%s\n" "========================================================"
-    printf "\n"
-    log_info "List complete"
-}
-
 # Route to appropriate action
 case "$ACTION" in
     install)
@@ -224,9 +178,6 @@ case "$ACTION" in
         ;;
     list-lxc)
         list_all_lxc
-        ;;
-    list-lxc-running)
-        list_running_lxc
         ;;
     *)
         log_error "Unknown action: $ACTION"

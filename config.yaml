@@ -1188,7 +1188,7 @@ scripts:
         description: "Distribution upgrade"
 
   proxmox:
-    description: "Proxmox VE management (4 actions)"
+    description: "Proxmox VE management (3 actions)"
     category: "System Management"
     file: "proxmox.sh"
     needs_sudo: true
@@ -1203,9 +1203,6 @@ scripts:
       - name: "list-lxc"
         parameter: "list-lxc"
         description: "List all LXC containers (running and offline)"
-      - name: "list-lxc-running"
-        parameter: "list-lxc-running"
-        description: "List running LXC containers with live IPs"
 
   pikvm-v3:
     description: "PiKVM v3 appliance management"

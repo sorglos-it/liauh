@@ -132,7 +132,7 @@ OS-level management and specialized appliances:
 | **linux** | Core Linux system configuration (network, DNS, users, groups, CA certs) | All 5 distros |
 | **ubuntu** | Ubuntu-specific system management | Ubuntu only |
 | **debian** | Debian-specific system management | Debian only |
-| **proxmox** | Proxmox VE virtualization platform management (update, maintenance-mode, list-lxc, list-lxc-running) | Proxmox only |
+| **proxmox** | Proxmox VE virtualization platform management (update, maintenance-mode, list-lxc) | Proxmox only |
 | **pikvm-v3** | PiKVM v3 appliance configuration and management | Arch (PiKVM) only |
 | **remotely** | Remotely remote desktop and support software | Debian, Ubuntu, RHEL, CentOS, Rocky, Alma, Fedora, openSUSE, SLES, Amazon Linux |
 
