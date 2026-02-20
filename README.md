@@ -156,4 +156,4 @@ Curious how "Unknown Linux Helper" came to be? Read **[BACKSTORY.md](BACKSTORY.m
 
 ---
 
-**GitHub**: https://github.com/sorglos-it/ULH
+**GitHub**: https://github.com/sorglos-it/ulh

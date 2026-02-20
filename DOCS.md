@@ -91,7 +91,7 @@ cd ~/ulh && bash ulh.sh
 ### Manual Clone
 
 ```bash
-git clone https://github.com/sorglos-it/ULH.git
+git clone https://github.com/sorglos-it/ulh.git
 cd ulh
 bash ulh.sh
 ```
@@ -743,7 +743,7 @@ execute_custom_repo_action  # Run custom repo script
 
 ## Support
 
-- **GitHub Issues**: https://github.com/sorglos-it/ULH/issues
+- **GitHub Issues**: https://github.com/sorglos-it/ulh/issues
 - **Documentation**: See README.md + SCRIPTS.md
 - **Script Examples**: Check scripts/ directory
 
