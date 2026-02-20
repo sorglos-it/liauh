@@ -178,6 +178,174 @@ scripts:
 
 ---
 
+## Answer File (answer.yaml)
+
+### What It Does
+
+The `custom/answer.yaml` file provides **default values for prompts** and enables **per-script automation** via the `autoscript` flag.
+
+**Two modes:**
+1. **Interactive mode** (default) - User sees all prompts, can press ENTER for defaults
+2. **Autoscript mode** - Prompts skipped, script executes automatically with defaults
+
+### How It Works
+
+#### Interactive Mode (Default)
+
+When running a script **without autoscript flag**:
+
+```
+Git username? [testuser]: 
+  → Press ENTER       → uses "testuser"
+  → Type "berry"      → uses "berry"
+```
+
+**Behavior:**
+- User still sees ALL prompts
+- User can override any default by typing
+- Defaults are suggestions, not mandatory
+- User always in control
+
+#### Autoscript Mode
+
+When running a script **with autoscript: true**:
+
+```
+Autoscript mode: executing 'install' automatically
+(no prompts shown)
+[script runs with defaults]
+```
+
+**Behavior:**
+- NO prompts shown
+- Values from answer.yaml used directly
+- Script executes non-interactively
+- Graceful fallback: if answers missing → shows prompts anyway
+
+### Structure
+
+```yaml
+scripts:
+  <script_name>:
+    autoscript: true/false          # Optional: enable automation
+    config:
+      - default: "value1"           # Prompt answers (array)
+      - default: "value2"
+```
+
+### Examples
+
+#### Example 1: Interactive (User Sees Prompts)
+
+```yaml
+scripts:
+  git:
+    config:
+      - default: "myuser"           # Username default
+      - default: "me@example.com"   # Email default
+```
+
+**Usage:**
+```
+Git username? [myuser]: 
+  (Press ENTER for default, or type new value)
+Git email? [me@example.com]: 
+  (Press ENTER for default, or type new value)
+```
+
+#### Example 2: Autoscript (No Prompts)
+
+```yaml
+scripts:
+  ubuntu:
+    autoscript: true                # Enable automation
+    config:
+      - default: "yes"              # Ubuntu Pro answer
+```
+
+**Usage:**
+```
+(no prompts shown)
+Autoscript mode: executing 'install' automatically
+[script runs with "yes"]
+```
+
+#### Example 3: Mixed (Some Interactive, Some Autoscript)
+
+```yaml
+scripts:
+  git:                              # Interactive
+    config:
+      - default: "myuser"
+      - default: "me@example.com"
+
+  docker:                           # Autoscript
+    autoscript: true
+    config:
+      - default: "dockeruser"
+
+  mariadb:                          # Interactive
+    config:
+      - default: ""                 # No default, user must type
+```
+
+### Important Notes
+
+- **Script names:** Must match `config.yaml` exactly (case-sensitive)
+- **Array indexing:** YAML arrays are 0-based (first prompt = index 0)
+- **Quote values:** Always use `"quotes"` around defaults
+- **Empty default:** Use `default: ""` if user must type (no suggestion)
+- **Fallback:** If answer.yaml missing/invalid → uses config.yaml defaults
+- **Graceful fallback:** If autoscript=true but answers missing → shows prompts anyway
+- **YAML validation:** Invalid YAML silently falls back to config.yaml defaults
+
+### When to Use Each Mode
+
+**Interactive (default):**
+- Development and testing
+- Manual configuration
+- User wants to override defaults
+- Good for: ad-hoc tasks
+
+**Autoscript (autoscript: true):**
+- CI/CD pipelines
+- Batch operations
+- Repeated deployments
+- Server provisioning
+- Good for: automation and reproducibility
+
+### Best Practices
+
+1. **Use interactive for manual tasks**
+   ```yaml
+   git:
+     config:
+       - default: "corp-user"       # User can override
+   ```
+
+2. **Use autoscript for automation**
+   ```yaml
+   linux:
+     autoscript: true               # No user interaction needed
+     config:
+       - default: "yes"
+   ```
+
+3. **Provide empty defaults for sensitive data**
+   ```yaml
+   postgres:
+     config:
+       - default: "mydb"            # Database name (safe)
+       - default: ""                # Password (user must type!)
+   ```
+
+4. **Test before enabling autoscript**
+   - First run as interactive to verify defaults work
+   - Then enable autoscript: true once confident
+   - Keep interactive for development/testing
+
+---
+
 ## Custom Repositories
 
 ### Setup
