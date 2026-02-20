@@ -1,6 +1,6 @@
-# ulh Documentation
+# ULH Documentation
 
-Complete guide to ulh v0.5 architecture, configuration, and development.
+Complete guide to ULH v0.5 architecture, configuration, and development.
 
 ## Table of Contents
 
@@ -18,9 +18,9 @@ Complete guide to ulh v0.5 architecture, configuration, and development.
 
 ### Design Philosophy
 
-ulh prioritizes simplicity, consistency, and maintainability:
+ULH prioritizes simplicity, consistency, and maintainability:
 
-- **Single Entry Point** - `ulh.sh` orchestrates everything
+- **Single Entry Point** - `ULH.sh` orchestrates everything
 - **Focused Libraries** - Each file handles one responsibility
 - **Explicit Parameters** - Comma-separated strings, no silent globals
 - **Cross-Platform** - All scripts work on 5+ distribution families
@@ -29,8 +29,8 @@ ulh prioritizes simplicity, consistency, and maintainability:
 ### File Structure
 
 ```
-ulh/
-├── ulh.sh              # Main entry (945 lines, auto-update + repo init)
+ULH/
+├── ULH.sh              # Main entry (945 lines, auto-update + repo init)
 ├── lib/                  # 7 focused libraries
 │   ├── core.sh          # OS detection, logging, utilities
 │   ├── colors.sh        # ANSI color definitions
@@ -60,11 +60,11 @@ ulh/
 
 ### Execution Flow
 
-1. `ulh.sh` starts → sets UTF-8 locale, enables bash strict mode
+1. `ULH.sh` starts → sets UTF-8 locale, enables bash strict mode
 2. Auto-update check → git fetch + pull (if updates exist, `exec` restart)
 3. Load libraries → core, yaml, menu, execute, repos
 4. Initialize repositories → clone/sync custom repos
-5. Show menu → repository selector or ulh scripts directly
+5. Show menu → repository selector or ULH scripts directly
 6. Execute action → call script with parameters
 7. Return to menu
 
@@ -75,25 +75,25 @@ ulh/
 ### Automatic (One-liner wget)
 
 ```bash
-wget -qO - https://raw.githubusercontent.com/sorglos-it/ulh/main/install.sh | bash
+wget -qO - https://raw.githubusercontent.com/sorglos-it/ULH/main/install.sh | bash
 ```
 
 ### Automatic (One-liner curl)
 ```bash
-curl -sSL https://raw.githubusercontent.com/sorglos-it/ulh/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/sorglos-it/ULH/main/install.sh | bash
 ```
 
 Then:
 ```bash
-cd ~/ulh && bash ulh.sh
+cd ~/ULH && bash ULH.sh
 ```
 
 ### Manual Clone
 
 ```bash
-git clone https://github.com/sorglos-it/ulh.git
-cd ulh
-bash ulh.sh
+git clone https://github.com/sorglos-it/ULH.git
+cd ULH
+bash ULH.sh
 ```
 
 ### Platform-Specific
@@ -101,7 +101,7 @@ bash ulh.sh
 **install.sh** automatically:
 - Detects OS (Debian, Red Hat, Arch, SUSE, Alpine)
 - Installs git (only dependency)
-- Clones/updates ulh
+- Clones/updates ULH
 - Works with or without sudo (detects if running as root)
 
 ---
@@ -110,7 +110,7 @@ bash ulh.sh
 
 ### System Scripts (config.yaml)
 
-Controls built-in ulh scripts at repo root:
+Controls built-in ULH scripts at repo root:
 
 ```yaml
 scripts:
@@ -388,7 +388,7 @@ repositories:
     enabled:
 ```
 
-3. **ulh handles the rest** - Auto-clone, sync, execute
+3. **ULH handles the rest** - Auto-clone, sync, execute
 
 ### Authentication Methods
 
@@ -622,7 +622,7 @@ All menus use consistent 80-character box formatting:
 
 ```
 +==============================================================================+
-| ulh - Unknown Linux Helper                         VERSION: 0.5 |
+| ULH - Unknown Linux Helper                         VERSION: 0.5 |
 +==============================================================================+
 |
    [menu items here]
@@ -635,10 +635,10 @@ All menus use consistent 80-character box formatting:
 ### Navigation
 
 **Repository Selector** (Root)
-- Shows: ulh Scripts + all enabled Custom Repos
+- Shows: ULH Scripts + all enabled Custom Repos
 - Actions: Select repo → enter its menu
 
-**ulh Scripts Menu**
+**ULH Scripts Menu**
 - Shows: Categories (Essential Tools, Databases, etc.)
 - Context-aware: Back button only if coming from repo selector
 - Actions: Select category → show scripts
@@ -663,7 +663,7 @@ All menus use consistent 80-character box formatting:
 - Dependencies: `which git` (git required)
 
 **Solution:**
-ulh auto-chmods scripts, but verify manually if needed.
+ULH auto-chmods scripts, but verify manually if needed.
 
 ### Custom repo not cloning
 
@@ -743,7 +743,7 @@ execute_custom_repo_action  # Run custom repo script
 
 ## Support
 
-- **GitHub Issues**: https://github.com/sorglos-it/ulh/issues
+- **GitHub Issues**: https://github.com/sorglos-it/ULH/issues
 - **Documentation**: See README.md + SCRIPTS.md
 - **Script Examples**: Check scripts/ directory
 
@@ -865,7 +865,7 @@ scripts:
 - Debug: View parsed YAML with `yq eval '.' custom/answer.yaml`
 
 **Invalid YAML error?**
-- ulh silently falls back to config.yaml defaults
+- ULH silently falls back to config.yaml defaults
 - Check YAML with: `yq eval 'keys' custom/answer.yaml`
 - If error, fix syntax and retry
 
