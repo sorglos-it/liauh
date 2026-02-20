@@ -5,7 +5,6 @@ scripts:
   hello:
     description: "Simple Hello World demo"
     path: "scripts/hello.sh"
-    needs_sudo: false
     
     actions:
       - name: "run"
@@ -20,7 +19,6 @@ scripts:
   system-info:
     description: "Display system information"
     path: "scripts/system-info.sh"
-    needs_sudo: false
     
     actions:
       - name: "show"
@@ -36,7 +34,6 @@ scripts:
   file-backup:
     description: "Simple file backup utility"
     path: "scripts/file-backup.sh"
-    needs_sudo: false
     
     actions:
       - name: "backup"

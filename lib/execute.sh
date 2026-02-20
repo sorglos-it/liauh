@@ -42,17 +42,20 @@ _load_answers() {
     [[ "$_ANSWERS_CACHE" != "none" && "$_ANSWERS_CACHE" != "invalid" ]]
 }
 
-# Get per-script autoscript flag from answer.yaml (default: false)
+# Get per-script autoscript flag from answer.yaml (presence check)
 # Args: script_name
-# Returns: 0 (true/autoscript enabled) or 1 (false/interactive mode)
+# Returns: 0 (autoscript field present) or 1 (autoscript field not present)
+# Note: Checks for field PRESENCE, not value. autoscript: (no value) = enabled
 _get_script_autoscript() {
     local script_name="$1"
     
     if _load_answers; then
-        local autoscript=$(_yq_eval ".scripts.${script_name}.autoscript // false" "$_ANSWERS_CACHE" 2>/dev/null)
-        [[ "$autoscript" == "true" ]] && return 0 || return 1
+        # Use 'has' to check if field exists (works with null values)
+        # If the field exists (presence check), return 0; otherwise return 1
+        local has_autoscript=$(_yq_eval ".scripts.${script_name} | has(\"autoscript\")" "$_ANSWERS_CACHE" 2>/dev/null)
+        [[ "$has_autoscript" == "true" ]] && return 0 || return 1
     fi
-    return 1  # Default to interactive mode
+    return 1  # Default to interactive mode (autoscript field not present)
 }
 
 # Check if all required answers are present for a script

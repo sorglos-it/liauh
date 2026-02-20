@@ -22,7 +22,6 @@ scripts:
     description: "HTTP requests utility"
     category: "Essential Tools"
     file: "curl.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -39,7 +38,6 @@ scripts:
     description: "HTTP/FTP download utility"
     category: "Essential Tools"
     file: "wget.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -56,7 +54,6 @@ scripts:
     description: "Version control system"
     category: "Essential Tools"
     file: "git.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -85,7 +82,6 @@ scripts:
     description: "Advanced text editor"
     category: "Essential Tools"
     file: "vim.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -105,7 +101,6 @@ scripts:
     description: "Simple text editor"
     category: "Essential Tools"
     file: "nano.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -122,7 +117,6 @@ scripts:
     description: "System resource monitor"
     category: "Essential Tools"
     file: "htop.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -139,7 +133,6 @@ scripts:
     description: "Terminal multiplexer"
     category: "Essential Tools"
     file: "tmux.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -159,7 +152,6 @@ scripts:
     description: "Terminal multiplexer"
     category: "Essential Tools"
     file: "screen.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -176,7 +168,7 @@ scripts:
     description: "SSH server and client"
     category: "Networking"
     file: "openssh.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -387,7 +379,6 @@ scripts:
     description: "Network utilities (ifconfig, netstat)"
     category: "Networking"
     file: "net-tools.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -404,7 +395,7 @@ scripts:
     description: "Development tools and compilers"
     category: "Essential Tools"
     file: "build-essential.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -421,7 +412,6 @@ scripts:
     description: "JSON query processor"
     category: "Essential Tools"
     file: "jq.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -438,7 +428,7 @@ scripts:
     description: "Fast file search using indexed database"
     category: "Essential Tools"
     file: "locate.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -459,7 +449,7 @@ scripts:
     description: "Apache HTTP Server"
     category: "Web Servers"
     file: "apache.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -493,7 +483,7 @@ scripts:
     description: "Nginx HTTP Server"
     category: "Web Servers"
     file: "nginx.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -528,7 +518,7 @@ scripts:
     description: "MariaDB database server"
     category: "Database"
     file: "mariadb.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat]
     actions:
       - name: "install"
@@ -570,7 +560,7 @@ scripts:
     description: "PostgreSQL database server"
     category: "Database"
     file: "postgres.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -590,7 +580,7 @@ scripts:
     description: "MySQL database server"
     category: "Database"
     file: "mysql.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -611,7 +601,7 @@ scripts:
     description: "Docker container runtime"
     category: "Containerization & VM"
     file: "docker.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -645,7 +635,7 @@ scripts:
     description: "Portainer container management UI"
     category: "Containerization & VM"
     file: "portainer.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -662,7 +652,7 @@ scripts:
     description: "Proxmox guest agent and container management"
     category: "Containerization & VM"
     file: "proxmox.sh"
-    needs_sudo: true
+    sudo:
     os_only: "proxmox"
     actions:
       - name: "install"
@@ -744,7 +734,7 @@ scripts:
     description: "Docker Compose multi-container orchestration"
     category: "Containerization & VM"
     file: "docker-compose.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -765,7 +755,6 @@ scripts:
     description: "Node.js runtime and npm"
     category: "Programming Languages"
     file: "nodejs.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -782,7 +771,6 @@ scripts:
     description: "Python 3 runtime and pip"
     category: "Programming Languages"
     file: "python.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -799,7 +787,6 @@ scripts:
     description: "Ruby runtime and gem"
     category: "Programming Languages"
     file: "ruby.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -816,7 +803,6 @@ scripts:
     description: "Go programming language"
     category: "Programming Languages"
     file: "golang.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -833,7 +819,6 @@ scripts:
     description: "PHP runtime and CLI"
     category: "Programming Languages"
     file: "php.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -850,7 +835,6 @@ scripts:
     description: "Perl runtime and modules"
     category: "Programming Languages"
     file: "perl.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -868,7 +852,7 @@ scripts:
     description: "System logging daemon"
     category: "Logging & Monitoring"
     file: "rsyslog.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -888,7 +872,7 @@ scripts:
     description: "Advanced system logging"
     category: "Logging & Monitoring"
     file: "syslog-ng.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -908,7 +892,7 @@ scripts:
     description: "Brute-force attack protection"
     category: "Logging & Monitoring"
     file: "fail2ban.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -928,7 +912,7 @@ scripts:
     description: "Log rotation utility"
     category: "Logging & Monitoring"
     file: "logrotate.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -949,7 +933,6 @@ scripts:
     description: "DNS tools (dig, nslookup, host)"
     category: "Networking"
     file: "bind-utils.sh"
-    needs_sudo: false
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -969,7 +952,7 @@ scripts:
     description: "Modern VPN protocol"
     category: "Networking"
     file: "wireguard.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -989,7 +972,7 @@ scripts:
     description: "OpenVPN tunneling protocol"
     category: "Networking"
     file: "openvpn.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -1009,7 +992,7 @@ scripts:
     description: "Uncomplicated Firewall"
     category: "Networking"
     file: "ufw.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -1041,7 +1024,7 @@ scripts:
     description: "Pi-hole DNS ad-blocking service"
     category: "Networking"
     file: "pihole.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -1061,7 +1044,7 @@ scripts:
     description: "AdGuard Home DNS ad-blocking service"
     category: "Networking"
     file: "adguard-home.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -1081,7 +1064,7 @@ scripts:
     description: "Network file sharing with Samba/SMB"
     category: "Networking"
     file: "samba.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -1107,7 +1090,7 @@ scripts:
     description: "Mount and manage SMB/CIFS network shares"
     category: "Networking"
     file: "cifs-utils.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "install"
@@ -1127,7 +1110,7 @@ scripts:
     description: "Network, DNS, users, groups configuration"
     category: "System Management"
     file: "linux.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat, arch, suse, alpine]
     actions:
       - name: "network"
@@ -1237,7 +1220,7 @@ scripts:
     description: "Ubuntu system management"
     category: "System Management"
     file: "ubuntu.sh"
-    needs_sudo: true
+    sudo:
     os_only: "ubuntu"
     actions:
       - name: "update"
@@ -1259,7 +1242,7 @@ scripts:
     description: "Debian system management"
     category: "System Management"
     file: "debian.sh"
-    needs_sudo: true
+    sudo:
     os_only: "debian"
     actions:
       - name: "update"
@@ -1273,7 +1256,7 @@ scripts:
     description: "PiKVM v3 appliance management"
     category: "System Management"
     file: "pikvm-v3.sh"
-    needs_sudo: true
+    sudo:
     os_only: "arch"
     actions:
       - name: "update"
@@ -1296,7 +1279,7 @@ scripts:
     description: "Remotely - open-source remote desktop and support software"
     category: "System Management"
     file: "remotely.sh"
-    needs_sudo: true
+    sudo:
     os_family: [debian, redhat]
     actions:
       - name: "install"

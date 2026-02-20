@@ -1,6 +1,6 @@
 # ULH - Unknown Linux Helper
 
-**v0.4+** | 45 system management scripts for all Linux distributions
+**v0.5** | 45 system management scripts for all Linux distributions
 
 ## 🚀 Installation
 
