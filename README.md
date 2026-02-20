@@ -169,4 +169,16 @@ MIT License - Free for personal and commercial use
 
 **Questions?** Check **[DOCS.md](DOCS.md)** or open an issue on GitHub.
 
+## 💝 Support ULH
+
+If ULH helps you save time and reduces your Linux headaches, consider supporting the project:
+
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=6CDEVZGJWTNQQ)
+
+## 📖 The Story Behind ULH
+
+Curious how "Unknown Linux Helper" came to be? Read **[BACKSTORY.md](BACKSTORY.md)** — the chaotic naming odyssey featuring Kevin, the Unknown Man, and why naming things is impossible.
+
+---
+
 **GitHub**: https://github.com/sorglos-it/ULH
