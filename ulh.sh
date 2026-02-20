@@ -1,6 +1,6 @@
 #!/bin/bash
 # ulh - unknown linux helper (main entry point)
-# muh
+
 # Set UTF-8 locale for proper string length calculation
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
