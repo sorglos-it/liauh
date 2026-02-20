@@ -1,9 +1,9 @@
 #!/bin/bash
-# ULH - YAML Parser (wraps bundled yq)
+# ulh - YAML Parser (wraps bundled yq)
 
 # Locate architecture-specific yq binary
 _init_yq() {
-    local yqdir="${ULH_DIR}/lib/yq"
+    local yqdir="${ulh_DIR}/lib/yq"
     case "$(uname -m)" in
         x86_64)        YQ="${yqdir}/yq-amd64" ;;
         aarch64|arm64) YQ="${yqdir}/yq-arm64" ;;
@@ -19,9 +19,9 @@ _init_yq
 
 YAML_FILE=""
 
-# Load a config file (name without extension, from ULH_DIR)
+# Load a config file (name without extension, from ulh_DIR)
 yaml_load() {
-    YAML_FILE="${ULH_DIR}/${1}.yaml"
+    YAML_FILE="${ulh_DIR}/${1}.yaml"
     [[ -f "$YAML_FILE" ]] || { msg_err "Config not found: $YAML_FILE"; return 1; }
     debug "Config loaded: $YAML_FILE"
     return 0
@@ -47,7 +47,7 @@ yaml_info()        { yq_get ".scripts.${1}.${2}"; }
 yaml_script_path() {
     local file; file=$(yq_get ".scripts.${1}.file")
     local dir; dir=$(yq_get ".script_dir" "scripts")
-    [[ -n "$file" ]] && echo "${ULH_DIR}/${dir}/${file}" || echo "${ULH_DIR}/${dir}/${1}.sh"
+    [[ -n "$file" ]] && echo "${ulh_DIR}/${dir}/${file}" || echo "${ulh_DIR}/${dir}/${1}.sh"
 }
 
 # OS compatibility (priority: os_only > os_family > os_exclude)

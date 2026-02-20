@@ -1,17 +1,17 @@
 #!/bin/bash
-# ULH - Unknown Linux Helper (main entry point)
+# ulh - unknown linux helper (main entry point)
 
 # Set UTF-8 locale for proper string length calculation
 export LC_ALL=C.UTF-8
 export LANG=C.UTF-8
 
-ULH_VERSION="0.5"
-ULH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export ULH_VERSION ULH_DIR
+ulh_VERSION="0.5"
+ulh_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export ulh_VERSION ulh_DIR
 
 # Load all required libraries (order matters: dependencies first)
 for lib in core yaml menu execute repos; do
-    source "${ULH_DIR}/lib/${lib}.sh"
+    source "${ulh_DIR}/lib/${lib}.sh"
 done
 
 # ============================================================================
@@ -20,11 +20,11 @@ done
 
 _auto_update() {
     # Check if we're in a git repository
-    if [[ ! -d "$ULH_DIR/.git" ]]; then
+    if [[ ! -d "$ulh_DIR/.git" ]]; then
         return 0
     fi
     
-    cd "$ULH_DIR"
+    cd "$ulh_DIR"
     
     # Fetch latest from remote (silent, non-blocking)
     if ! git fetch origin &>/dev/null; then
@@ -35,10 +35,10 @@ _auto_update() {
     local behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || git rev-list --count HEAD..origin/master 2>/dev/null || echo "0")
     
     if [[ "$behind" -gt 0 ]]; then
-        msg_info "Updating ULH ($behind commit(s) behind)..."
+        msg_info "Updating ulh ($behind commit(s) behind)..."
         
         if git pull origin main &>/dev/null || git pull origin master &>/dev/null; then
-            msg_ok "ULH updated successfully - restarting..."
+            msg_ok "ulh updated successfully - restarting..."
             echo ""
             # Restart self with updated code
             exec "$0" "$@"
@@ -68,8 +68,8 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --check-update)
-            if [[ -d "$ULH_DIR/.git" ]]; then
-                cd "$ULH_DIR"
+            if [[ -d "$ulh_DIR/.git" ]]; then
+                cd "$ulh_DIR"
                 git fetch origin &>/dev/null
                 local behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || git rev-list --count HEAD..origin/master 2>/dev/null || echo "0")
                 if [[ "$behind" -gt 0 ]]; then
@@ -85,8 +85,8 @@ while [[ $# -gt 0 ]]; do
             fi
             ;;
         --update)
-            if [[ -d "$ULH_DIR/.git" ]]; then
-                cd "$ULH_DIR"
+            if [[ -d "$ulh_DIR/.git" ]]; then
+                cd "$ulh_DIR"
                 msg_info "Pulling latest version..."
                 if git pull origin main 2>/dev/null || git pull origin master 2>/dev/null; then
                     msg_ok "Update successful!"
@@ -131,7 +131,7 @@ detect_os || exit 1
 yaml_load "config" || exit 1
 
 # Initialize custom repositories (clone/pull and merge configs)
-repo_init "$ULH_DIR"
+repo_init "$ulh_DIR"
 
 # Start main menu loop
 menu_main

@@ -1,15 +1,15 @@
 #!/bin/bash
-# ULH - Script Execution Engine (prompts, validation, execution)
+# ulh - Script Execution Engine (prompts, validation, execution)
 
 # Get correct yq binary for current architecture
 _get_yq() {
     if [[ -z "$_YQ_CACHE" ]]; then
         local arch=$(uname -m)
         case "$arch" in
-            x86_64) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-amd64" ;;
-            aarch64) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-arm64" ;;
-            armv7l) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-arm" ;;
-            i686) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-386" ;;
+            x86_64) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-amd64" ;;
+            aarch64) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-arm64" ;;
+            armv7l) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-arm" ;;
+            i686) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-386" ;;
             *) _YQ_CACHE="yq" ;;  # Fallback to PATH
         esac
         [[ -x "$_YQ_CACHE" ]] || chmod +x "$_YQ_CACHE" 2>/dev/null
@@ -26,7 +26,7 @@ _yq_eval() {
 # Load and cache answer.yaml file
 _load_answers() {
     if [[ -z "$_ANSWERS_CACHE" ]]; then
-        local answers_file="${ULH_DIR}/custom/answer.yaml"
+        local answers_file="${ulh_DIR}/custom/answer.yaml"
         if [[ -f "$answers_file" ]]; then
             # Validate YAML syntax
             if _yq_eval 'keys' "$answers_file" &>/dev/null; then

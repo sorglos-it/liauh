@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================================
-# ULH Test Script
-# Demonstrates how to parse parameters passed by ULH
+# ulh Test Script
+# Demonstrates how to parse parameters passed by ulh
 # Parameters come as comma-separated string: action,VAR1=val1,VAR2=val2,...
 # ============================================================================
 

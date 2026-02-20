@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ULH Script Template
+# ulh Script Template
 # Use this as a starting point for new system management scripts
 # Parameter format: action,VAR1=val1,VAR2=val2
 

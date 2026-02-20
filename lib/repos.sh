@@ -7,10 +7,10 @@ _get_yq() {
     if [[ -z "$_YQ_CACHE" ]]; then
         local arch=$(uname -m)
         case "$arch" in
-            x86_64) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-amd64" ;;
-            aarch64) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-arm64" ;;
-            armv7l) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-arm" ;;
-            i686) _YQ_CACHE="${ULH_DIR}/lib/yq/yq-386" ;;
+            x86_64) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-amd64" ;;
+            aarch64) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-arm64" ;;
+            armv7l) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-arm" ;;
+            i686) _YQ_CACHE="${ulh_DIR}/lib/yq/yq-386" ;;
             *) _YQ_CACHE="yq" ;;  # Fallback to PATH
         esac
         [[ -x "$_YQ_CACHE" ]] || chmod +x "$_YQ_CACHE" 2>/dev/null
@@ -83,7 +83,7 @@ repo_sync_one() {
     
     # Resolve path - automatically prefix with custom/
     if [[ "$path" != /* ]]; then
-        path="${ULH_DIR}/custom/${path}"
+        path="${ulh_DIR}/custom/${path}"
     fi
     
     # Step 1: If repo exists, handle auto_update
@@ -292,7 +292,7 @@ repo_resolve_ssh_key() {
     fi
     
     # Relative filename - try custom/keys/ first, then ~/.ssh/
-    local key_in_custom="${ULH_DIR}/custom/keys/${ssh_key}"
+    local key_in_custom="${ulh_DIR}/custom/keys/${ssh_key}"
     if [[ -f "$key_in_custom" ]]; then
         echo "$key_in_custom"
         return 0
@@ -357,7 +357,7 @@ repo_get_path() {
     if [[ "$path" == /* ]]; then
         echo "$path"
     else
-        echo "${ULH_DIR}/custom/${path}"
+        echo "${ulh_DIR}/custom/${path}"
     fi
 }
 

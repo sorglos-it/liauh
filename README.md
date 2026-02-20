@@ -1,4 +1,4 @@
-# ULH - Unknown Linux Helper
+# ulh - unknown linux helper
 
 **v0.5** | 45 system management scripts for all Linux distributions
 
@@ -33,14 +33,14 @@ bash ulh.sh
 ## 📖 Usage
 
 ```bash
-cd ~/ULH
-bash ULH.sh
+cd ~/ulh
+bash ulh.sh
 ```
 
 Menu flow:
 ```
 1. Repository Selector
-   ├─ ULH Scripts
+   ├─ ulh Scripts
    │  └─ Categories
    │     └─ Scripts
    │        └─ Actions
@@ -73,8 +73,8 @@ See **[DOCS.md](DOCS.md#custom-repositories)** for setup.
 ## 🏗️ Architecture
 
 ```
-ULH/
-├── ULH.sh              # Entry point (self-updating)
+ulh/
+├── ulh.sh              # Entry point (self-updating)
 ├── lib/                  # 7 focused libraries
 ├── scripts/              # 45 system management scripts + custom repos
 ├── custom/               # Your custom repos
@@ -109,14 +109,14 @@ ULH/
 ## 🚀 Quick Start
 
 1. **Install**: `bash install.sh` or clone repo
-2. **Run**: `bash ULH.sh`
+2. **Run**: `bash ulh.sh`
 3. **Select**: Choose System Management or Custom Repo
 4. **Navigate**: Category → Script → Action
 5. **Configure**: Follow prompts (or accept defaults)
 
 ## 🔐 Security
 
-- Scripts run **individually with sudo** (ULH stays unprivileged)
+- Scripts run **individually with sudo** (ulh stays unprivileged)
 - SSH keys stored in **custom/keys/** (protected by .gitignore)
 - No hardcoded credentials (use environment variables)
 - All scripts pass **syntax validation** (bash -n)
@@ -144,16 +144,16 @@ MIT License - Free for personal and commercial use
 
 **Questions?** Check **[DOCS.md](DOCS.md)** or open an issue on GitHub.
 
-## 💝 Support ULH
+## 💝 Support ulh
 
-If ULH helps you save time and reduces your Linux headaches, consider supporting the project:
+If ulh helps you save time and reduces your Linux headaches, consider supporting the project:
 
 [![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=6CDEVZGJWTNQQ)
 
-## 📖 The Story Behind ULH
+## 📖 The Story Behind ulh
 
-Curious how "Unknown Linux Helper" came to be? Read **[BACKSTORY.md](BACKSTORY.md)** — the chaotic naming odyssey featuring Kevin, the Unknown Man, and why naming things is impossible.
+Curious how "unknown linux helper" came to be? Read **[BACKSTORY.md](BACKSTORY.md)** — the chaotic naming odyssey featuring Kevin, the Unknown Man, and why naming things is impossible.
 
 ---
 
-**GitHub**: https://github.com/sorglos-it/ULH
+**GitHub**: https://github.com/sorglos-it/ulh
