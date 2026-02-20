@@ -45,7 +45,7 @@ log_error() {
 # Verify this is running on Arch Linux for PiKVM
 detect_os() {
     source /etc/os-release || log_error "Cannot detect OS"
-    [[ "${ID,,}" == "arch" ]] || log_error "This script is for Arch (PiKVM v3) only"
+    [[ "${ID,,}" == "archarm" ]] || log_error "This script is for Arch (PiKVM v3) only"
 }
 
 # Update system packages
