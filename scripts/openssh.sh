@@ -129,150 +129,150 @@ configure_openssh() {
     echo "========================================"
     echo "NETWORK & CONNECTIVITY OPTIONS"
     echo "========================================"
-    read -p "[NETWORK] SSH listening port (default: 22): " SSH_PORT
+    SSH_PORT="${SSH_PORT:-22}"
     SSH_PORT="${SSH_PORT:-22}"
     
-    read -p "[NETWORK] Listen on IPv4 address (default: 0.0.0.0): " LISTEN_IPv4
+    LISTEN_IPv4="${LISTEN_IPv4:-0.0.0.0}"
     LISTEN_IPv4="${LISTEN_IPv4:-0.0.0.0}"
     
-    read -p "[NETWORK] Listen on IPv6 address (default: ::, empty to skip): " LISTEN_IPv6
+    LISTEN_IPv6="${LISTEN_IPv6:-::}"
     LISTEN_IPv6="${LISTEN_IPv6:-::}"
     
-    read -p "[NETWORK] SSH Protocol version (default: 2): " SSH_PROTOCOL
+    SSH_PROTOCOL="${SSH_PROTOCOL:-2}"
     SSH_PROTOCOL="${SSH_PROTOCOL:-2}"
     
-    read -p "[NETWORK] TCP Keep Alive? (yes/no, default: yes): " TCP_KEEPALIVE
+    TCP_KEEPALIVE="${TCP_KEEPALIVE:-yes}"
     TCP_KEEPALIVE="${TCP_KEEPALIVE:-yes}"
     
-    read -p "[NETWORK] Address Family (any/inet/inet6, default: any): " ADDRESS_FAMILY
+    ADDRESS_FAMILY="${ADDRESS_FAMILY:-any}"
     ADDRESS_FAMILY="${ADDRESS_FAMILY:-any}"
     
     echo ""
     echo "========================================"
     echo "AUTHENTICATION OPTIONS"
     echo "========================================"
-    read -p "[AUTH] Password Authentication? (yes/no, default: yes): " PASS_AUTH
+    PASS_AUTH="${PASS_AUTH:-yes}"
     PASS_AUTH="${PASS_AUTH:-yes}"
     
-    read -p "[AUTH] Public Key Authentication? (yes/no, default: yes): " PUBKEY_AUTH
+    PUBKEY_AUTH="${PUBKEY_AUTH:-yes}"
     PUBKEY_AUTH="${PUBKEY_AUTH:-yes}"
     
-    read -p "[AUTH] Kerberos Authentication? (yes/no, default: no): " KERBEROS_AUTH
+    KERBEROS_AUTH="${KERBEROS_AUTH:-no}"
     KERBEROS_AUTH="${KERBEROS_AUTH:-no}"
     
-    read -p "[AUTH] GSSAPI Authentication? (yes/no, default: no): " GSSAPI_AUTH
+    GSSAPI_AUTH="${GSSAPI_AUTH:-no}"
     GSSAPI_AUTH="${GSSAPI_AUTH:-no}"
     
-    read -p "[AUTH] Use PAM? (yes/no, default: yes): " USE_PAM
+    USE_PAM="${USE_PAM:-yes}"
     USE_PAM="${USE_PAM:-yes}"
     
-    read -p "[AUTH] Authentication methods (empty for default): " AUTH_METHODS
+    AUTH_METHODS="${AUTH_METHODS:-}"
     
-    read -p "[AUTH] Max authentication attempts (default: 6): " MAX_AUTH_TRIES
+    MAX_AUTH_TRIES="${MAX_AUTH_TRIES:-6}"
     MAX_AUTH_TRIES="${MAX_AUTH_TRIES:-6}"
     
     echo ""
     echo "========================================"
     echo "ROOT LOGIN & USER RESTRICTIONS"
     echo "========================================"
-    read -p "[USERS] Permit Root Login (yes/no/prohibit-password/without-password, default: prohibit-password): " PERMIT_ROOT
+    PERMIT_ROOT="${PERMIT_ROOT:-prohibit-password}"
     PERMIT_ROOT="${PERMIT_ROOT:-prohibit-password}"
     
-    read -p "[USERS] Allow Users (comma-separated, empty for none): " ALLOW_USERS
+    ALLOW_USERS="${ALLOW_USERS:-}"
     
-    read -p "[USERS] Allow Groups (comma-separated, empty for none): " ALLOW_GROUPS
+    ALLOW_GROUPS="${ALLOW_GROUPS:-}"
     
-    read -p "[USERS] Deny Users (comma-separated, empty for none): " DENY_USERS
+    DENY_USERS="${DENY_USERS:-}"
     
-    read -p "[USERS] Deny Groups (comma-separated, empty for none): " DENY_GROUPS
+    DENY_GROUPS="${DENY_GROUPS:-}"
     
     echo ""
     echo "========================================"
     echo "SECURITY OPTIONS"
     echo "========================================"
-    read -p "[SECURITY] Strict Modes? (yes/no, default: yes): " STRICT_MODES
+    STRICT_MODES="${STRICT_MODES:-yes}"
     STRICT_MODES="${STRICT_MODES:-yes}"
     
-    read -p "[SECURITY] Permit User Environment? (yes/no, default: no): " PERMIT_USER_ENV
+    PERMIT_USER_ENV="${PERMIT_USER_ENV:-no}"
     PERMIT_USER_ENV="${PERMIT_USER_ENV:-no}"
     
-    read -p "[SECURITY] Permit Empty Passwords? (yes/no, default: no): " PERMIT_EMPTY_PASS
+    PERMIT_EMPTY_PASS="${PERMIT_EMPTY_PASS:-no}"
     PERMIT_EMPTY_PASS="${PERMIT_EMPTY_PASS:-no}"
     
-    read -p "[SECURITY] Permit Tunnel? (yes/no, default: no): " PERMIT_TUNNEL
+    PERMIT_TUNNEL="${PERMIT_TUNNEL:-no}"
     PERMIT_TUNNEL="${PERMIT_TUNNEL:-no}"
     
-    read -p "[SECURITY] Compression (yes/no/delayed, default: delayed): " COMPRESSION
+    COMPRESSION="${COMPRESSION:-delayed}"
     COMPRESSION="${COMPRESSION:-delayed}"
     
-    read -p "[SECURITY] Client Alive Interval seconds (0=disabled, default: 300): " CLIENT_ALIVE_INTERVAL
+    CLIENT_ALIVE_INTERVAL="${CLIENT_ALIVE_INTERVAL:-300}"
     CLIENT_ALIVE_INTERVAL="${CLIENT_ALIVE_INTERVAL:-300}"
     
-    read -p "[SECURITY] Client Alive Count Max (default: 3): " CLIENT_ALIVE_COUNTMAX
+    CLIENT_ALIVE_COUNTMAX="${CLIENT_ALIVE_COUNTMAX:-3}"
     CLIENT_ALIVE_COUNTMAX="${CLIENT_ALIVE_COUNTMAX:-3}"
     
-    read -p "[SECURITY] Login Grace Time seconds (default: 120): " LOGIN_GRACE_TIME
+    LOGIN_GRACE_TIME="${LOGIN_GRACE_TIME:-120}"
     LOGIN_GRACE_TIME="${LOGIN_GRACE_TIME:-120}"
     
     echo ""
     echo "========================================"
     echo "X11 & FORWARDING OPTIONS"
     echo "========================================"
-    read -p "[FORWARDING] X11 Forwarding? (yes/no, default: no): " X11_FORWARDING
+    X11_FORWARDING="${X11_FORWARDING:-no}"
     X11_FORWARDING="${X11_FORWARDING:-no}"
     
-    read -p "[FORWARDING] X11 Use Localhost? (yes/no, default: yes): " X11_USE_LOCALHOST
+    X11_USE_LOCALHOST="${X11_USE_LOCALHOST:-yes}"
     X11_USE_LOCALHOST="${X11_USE_LOCALHOST:-yes}"
     
-    read -p "[FORWARDING] Allow Agent Forwarding? (yes/no, default: yes): " ALLOW_AGENT_FORWARD
+    ALLOW_AGENT_FORWARD="${ALLOW_AGENT_FORWARD:-yes}"
     ALLOW_AGENT_FORWARD="${ALLOW_AGENT_FORWARD:-yes}"
     
-    read -p "[FORWARDING] Allow TCP Forwarding (yes/no/local/remote, default: yes): " ALLOW_TCP_FORWARD
+    ALLOW_TCP_FORWARD="${ALLOW_TCP_FORWARD:-yes}"
     ALLOW_TCP_FORWARD="${ALLOW_TCP_FORWARD:-yes}"
     
-    read -p "[FORWARDING] Gateway Ports? (yes/no, default: no): " GATEWAY_PORTS
+    GATEWAY_PORTS="${GATEWAY_PORTS:-no}"
     GATEWAY_PORTS="${GATEWAY_PORTS:-no}"
     
     echo ""
     echo "========================================"
     echo "LOGGING & DISPLAY OPTIONS"
     echo "========================================"
-    read -p "[LOGGING] Print MOTD? (yes/no, default: yes): " PRINT_MOTD
+    PRINT_MOTD="${PRINT_MOTD:-yes}"
     PRINT_MOTD="${PRINT_MOTD:-yes}"
     
-    read -p "[LOGGING] Print Last Log? (yes/no, default: yes): " PRINT_LASTLOG
+    PRINT_LASTLOG="${PRINT_LASTLOG:-yes}"
     PRINT_LASTLOG="${PRINT_LASTLOG:-yes}"
     
-    read -p "[LOGGING] Log Level (QUIET/FATAL/ERROR/INFO/VERBOSE/DEBUG, default: INFO): " LOG_LEVEL
+    LOG_LEVEL="${LOG_LEVEL:-INFO}"
     LOG_LEVEL="${LOG_LEVEL:-INFO}"
     
-    read -p "[LOGGING] Banner file path (empty for none, e.g., /etc/ssh/banner): " BANNER
+    BANNER="${BANNER:-}"
     
-    read -p "[LOGGING] Syslog Facility (AUTH/AUTHPRIV/DAEMON/LOCAL0-7, default: AUTH): " SYSLOG_FACILITY
+    SYSLOG_FACILITY="${SYSLOG_FACILITY:-AUTH}"
     SYSLOG_FACILITY="${SYSLOG_FACILITY:-AUTH}"
     
     echo ""
     echo "========================================"
     echo "KEYS & CRYPTOGRAPHY OPTIONS"
     echo "========================================"
-    read -p "[CRYPTO] Host Key Algorithms (comma-separated, empty for defaults): " HOST_KEY_ALGORITHMS
+    HOST_KEY_ALGORITHMS="${HOST_KEY_ALGORITHMS:-}"
     
-    read -p "[CRYPTO] Ciphers (comma-separated, empty for defaults): " CIPHERS
+    CIPHERS="${CIPHERS:-}"
     
-    read -p "[CRYPTO] MACs (comma-separated, empty for defaults): " MACS
+    MACS="${MACS:-}"
     
-    read -p "[CRYPTO] Key Exchange Algorithms (comma-separated, empty for defaults): " KEY_EXCHANGE_ALGOS
+    KEY_EXCHANGE_ALGOS="${KEY_EXCHANGE_ALGOS:-}"
     
-    read -p "[CRYPTO] Rekey Limit (e.g., '1G 1h', empty for defaults): " REKEY_LIMIT
+    REKEY_LIMIT="${REKEY_LIMIT:-}"
     
-    read -p "[CRYPTO] Authorized Keys File (default: .ssh/authorized_keys): " AUTHORIZED_KEYS_FILE
+    AUTHORIZED_KEYS_FILE="${AUTHORIZED_KEYS_FILE:-.ssh/authorized_keys}"
     AUTHORIZED_KEYS_FILE="${AUTHORIZED_KEYS_FILE:-.ssh/authorized_keys}"
     
     echo ""
     echo "========================================"
     echo "SUBSYSTEM OPTIONS"
     echo "========================================"
-    read -p "[SUBSYSTEM] SFTP subsystem path (default: /usr/lib/openssh/sftp-server): " SFTP_SUBSYSTEM
+    SFTP_SUBSYSTEM="${SFTP_SUBSYSTEM:-/usr/lib/openssh/sftp-server}"
     SFTP_SUBSYSTEM="${SFTP_SUBSYSTEM:-/usr/lib/openssh/sftp-server}"
     
     # Generate configuration content with all options
