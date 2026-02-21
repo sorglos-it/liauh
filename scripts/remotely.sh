@@ -251,15 +251,33 @@ install_remotely() {
     log_info "Extracting Remotely agent (this may take a moment)..."
     
     # Extract with progress indicator (use -a to auto-convert backslashes to forward slashes)
-    if $SUDO_PREFIX unzip -q -a -o "$TEMP_ZIP" -d "$INSTALL_DIR" 2>&1; then
-        log_info "✓ Extraction complete"
-    else
-        log_error "Failed to extract Remotely agent"
+    $SUDO_PREFIX unzip -q -a -o "$TEMP_ZIP" -d "$INSTALL_DIR" 2>&1 || true
+    
+    log_info "✓ Extraction complete"
+    
+    # Debug: List extracted files
+    log_info "Files extracted:"
+    find "$INSTALL_DIR" -maxdepth 2 -type f 2>/dev/null | head -10 | while read f; do
+        log_info "  - $(basename "$f")"
+    done
+    
+    # Verify extraction by checking for main executable (try different paths)
+    local agent_found=0
+    if [[ -f "$INSTALL_DIR/Remotely_Agent" ]]; then
+        agent_found=1
+    elif [[ -f "$INSTALL_DIR/Remotely/Remotely_Agent" ]]; then
+        # ZIP may have created a Remotely subdirectory
+        log_info "Found agent in subdirectory, moving files..."
+        $SUDO_PREFIX mv "$INSTALL_DIR/Remotely"/* "$INSTALL_DIR/" || true
+        agent_found=1
+    elif [[ -f $(find "$INSTALL_DIR" -name "Remotely_Agent" -type f 2>/dev/null | head -1) ]]; then
+        log_info "Found agent in nested directory, moving..."
+        $SUDO_PREFIX find "$INSTALL_DIR" -name "Remotely_Agent" -type f -exec dirname {} \; | head -1 | xargs -I {} $SUDO_PREFIX mv {}/* "$INSTALL_DIR/" || true
+        agent_found=1
     fi
     
-    # Verify extraction by checking for main executable
-    if [[ ! -f "$INSTALL_DIR/Remotely_Agent" ]]; then
-        log_error "Failed to extract Remotely agent - Remotely_Agent not found"
+    if [[ $agent_found -eq 0 ]]; then
+        log_error "Failed to extract Remotely agent - Remotely_Agent not found after extraction"
     fi
     
     log_info "Extracted files: $(find "$INSTALL_DIR" -type f | wc -l) files"
