@@ -181,7 +181,7 @@ generate_uuid() {
 
 # Install Remotely
 install_remotely() {
-    log_info "Installing Remotely..."
+    log_info "Checking Remotely installation status..."
     
     # Check if running as root
     if [[ $EUID -ne 0 ]]; then
@@ -189,6 +189,74 @@ install_remotely() {
     fi
     
     detect_os
+    
+    # Check if Remotely is already installed
+    if systemctl list-unit-files remotely.service &>/dev/null; then
+        log_info "Remotely service found"
+        
+        # Check if service is enabled
+        if systemctl is-enabled remotely &>/dev/null; then
+            # Service is enabled and exists
+            if systemctl is-active --quiet remotely; then
+                log_info_blue "Remotely is already installed and configured"
+                return 0
+            else
+                log_warn "Remotely service is enabled but not running, starting it..."
+                systemctl start remotely
+                sleep 2
+                if systemctl is-active --quiet remotely; then
+                    log_info_blue "Remotely is already installed and configured"
+                    return 0
+                fi
+            fi
+        else
+            # Service exists but is disabled, enable and update configuration
+            log_info "Remotely is installed but disabled, enabling and updating configuration..."
+            
+            if [[ -z "$REMOTELY_SERVER" ]]; then
+                log_error "Remotely Server URL cannot be empty"
+            fi
+            
+            if [[ -z "$ORGANIZATION_ID" ]]; then
+                log_error "OrganizationID cannot be empty"
+            fi
+            
+            # Update configuration with new server/org
+            log_info "Updating configuration..."
+            local device_id=$(jq -r '.DeviceID' "$CONFIG_FILE" 2>/dev/null || echo "")
+            local server_token=$(jq -r '.ServerVerificationToken' "$CONFIG_FILE" 2>/dev/null || echo "")
+            
+            if [[ -z "$device_id" ]]; then
+                device_id=$(generate_uuid)
+            fi
+            
+            local new_config="{
+  \"DeviceID\": \"$device_id\",
+  \"Host\": \"$REMOTELY_SERVER\",
+  \"OrganizationID\": \"$ORGANIZATION_ID\",
+  \"ServerVerificationToken\": \"$server_token\"
+}"
+            
+            echo "$new_config" | tee "$CONFIG_FILE" > /dev/null
+            chmod 600 "$CONFIG_FILE"
+            
+            # Enable and start service
+            systemctl enable remotely
+            systemctl start remotely
+            sleep 2
+            
+            if systemctl is-active --quiet remotely; then
+                log_info_blue "Remotely enabled and started successfully"
+                return 0
+            else
+                log_warn "Remotely service did not start. Check logs with: journalctl -u remotely -n 50"
+            fi
+            return 0
+        fi
+    fi
+    
+    # New installation
+    log_info "Installing Remotely..."
     
     # Use parameters from REMOTELY_SERVER and ORGANIZATION_ID
     if [[ -z "$REMOTELY_SERVER" ]]; then
