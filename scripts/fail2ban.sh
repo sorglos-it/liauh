@@ -1,17 +1,18 @@
 #!/bin/bash
 
 # fail2ban - Intrusion prevention system
+
+source "$(dirname "$0")/../lib/bootstrap.sh"
+
+parse_parameters "$1"
+detect_os
+
 # Install, update, uninstall, and configure fail2ban on all Linux distributions
 
 set -e
 
 
 # Check if we need sudo
-if [[ $EUID -ne 0 ]]; then
-    SUDO_PREFIX="sudo"
-else
-    SUDO_PREFIX=""
-fi
 
 
 # Parse action from first parameter
@@ -23,15 +24,8 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Log informational messages with green checkmark
-log_info() {
-    printf "${GREEN}✓${NC} %s\n" "$1"
-}
 
 # Log error messages with red X and exit
-log_error() {
-    printf "${RED}✗${NC} %s\n" "$1"
-    exit 1
-}
 
 # Detect operating system and set appropriate package manager commands
 detect_os() {
@@ -74,10 +68,10 @@ install_fail2ban() {
     log_info "Installing fail2ban..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UPDATE || true
-    $SUDO_PREFIX $PKG_INSTALL fail2ban || log_error "Failed"
-    $SUDO_PREFIX systemctl enable fail2ban
-    $SUDO_PREFIX systemctl start fail2ban
+    $PKG_UPDATE || true
+    $PKG_INSTALL fail2ban || log_error "Failed"
+    systemctl enable fail2ban
+    systemctl start fail2ban
     
     log_info "fail2ban installed and started!"
 }
@@ -87,8 +81,8 @@ update_fail2ban() {
     log_info "Updating fail2ban..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UPDATE || true
-    $SUDO_PREFIX $PKG_INSTALL fail2ban || log_error "Failed"
+    $PKG_UPDATE || true
+    $PKG_INSTALL fail2ban || log_error "Failed"
     
     log_info "fail2ban updated!"
 }
@@ -98,9 +92,9 @@ uninstall_fail2ban() {
     log_info "Uninstalling fail2ban..."
     detect_os
     
-    $SUDO_PREFIX systemctl stop fail2ban
-    $SUDO_PREFIX systemctl disable fail2ban
-    $SUDO_PREFIX $PKG_UNINSTALL fail2ban || log_error "Failed"
+    systemctl stop fail2ban
+    systemctl disable fail2ban
+    $PKG_UNINSTALL fail2ban || log_error "Failed"
     
     log_info "fail2ban uninstalled!"
 }
@@ -109,7 +103,7 @@ uninstall_fail2ban() {
 configure_fail2ban() {
     log_info "fail2ban configuration"
     log_info "Copy /etc/fail2ban/jail.conf to /etc/fail2ban/jail.local and edit"
-    log_info "Then: $SUDO_PREFIX systemctl restart fail2ban"
+    log_info "Then: systemctl restart fail2ban"
 }
 
 # Route to appropriate action

@@ -1,17 +1,18 @@
 #!/bin/bash
 
 # bind-utils - DNS tools and utilities
+
+source "$(dirname "$0")/../lib/bootstrap.sh"
+
+parse_parameters "$1"
+detect_os
+
 # Install, update, uninstall, and configure BIND utilities on all Linux distributions
 
 set -e
 
 
 # Check if we need sudo
-if [[ $EUID -ne 0 ]]; then
-    SUDO_PREFIX="sudo"
-else
-    SUDO_PREFIX=""
-fi
 
 
 # Parse action from first parameter
@@ -23,15 +24,8 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Log informational messages with green checkmark
-log_info() {
-    printf "${GREEN}✓${NC} %s\n" "$1"
-}
 
 # Log error messages with red X and exit
-log_error() {
-    printf "${RED}✗${NC} %s\n" "$1"
-    exit 1
-}
 
 # Detect operating system and set appropriate package manager commands
 detect_os() {
@@ -79,8 +73,8 @@ install_bind_utils() {
     log_info "Installing bind-utils..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UPDATE || true
-    $SUDO_PREFIX $PKG_INSTALL $PKG || log_error "Failed"
+    $PKG_UPDATE || true
+    $PKG_INSTALL $PKG || log_error "Failed"
     
     log_info "bind-utils installed!"
 }
@@ -90,8 +84,8 @@ update_bind_utils() {
     log_info "Updating bind-utils..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UPDATE || true
-    $SUDO_PREFIX $PKG_INSTALL $PKG || log_error "Failed"
+    $PKG_UPDATE || true
+    $PKG_INSTALL $PKG || log_error "Failed"
     
     log_info "bind-utils updated!"
 }
@@ -101,7 +95,7 @@ uninstall_bind_utils() {
     log_info "Uninstalling bind-utils..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UNINSTALL $PKG || log_error "Failed"
+    $PKG_UNINSTALL $PKG || log_error "Failed"
     
     log_info "bind-utils uninstalled!"
 }

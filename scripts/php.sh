@@ -1,17 +1,18 @@
 #!/bin/bash
 
 # php - PHP programming language
+
+source "$(dirname "$0")/../lib/bootstrap.sh"
+
+parse_parameters "$1"
+detect_os
+
 # Install, update, uninstall, and configure PHP on all Linux distributions
 
 set -e
 
 
 # Check if we need sudo
-if [[ $EUID -ne 0 ]]; then
-    SUDO_PREFIX="sudo"
-else
-    SUDO_PREFIX=""
-fi
 
 
 # Parse action from first parameter
@@ -23,15 +24,8 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Log informational messages with green checkmark
-log_info() {
-    printf "${GREEN}✓${NC} %s\n" "$1"
-}
 
 # Log error messages with red X and exit
-log_error() {
-    printf "${RED}✗${NC} %s\n" "$1"
-    exit 1
-}
 
 # Detect operating system and set appropriate package manager commands
 detect_os() {
@@ -74,8 +68,8 @@ install_php() {
     log_info "Installing PHP..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UPDATE || true
-    $SUDO_PREFIX $PKG_INSTALL php php-cli || log_error "Failed"
+    $PKG_UPDATE || true
+    $PKG_INSTALL php php-cli || log_error "Failed"
     
     log_info "PHP installed!"
 }
@@ -85,8 +79,8 @@ update_php() {
     log_info "Updating PHP..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UPDATE || true
-    $SUDO_PREFIX $PKG_INSTALL php php-cli || log_error "Failed"
+    $PKG_UPDATE || true
+    $PKG_INSTALL php php-cli || log_error "Failed"
     
     log_info "PHP updated!"
 }
@@ -96,7 +90,7 @@ uninstall_php() {
     log_info "Uninstalling PHP..."
     detect_os
     
-    $SUDO_PREFIX $PKG_UNINSTALL php php-cli || log_error "Failed"
+    $PKG_UNINSTALL php php-cli || log_error "Failed"
     
     log_info "PHP uninstalled!"
 }

@@ -11,15 +11,24 @@ source "${BASH_SOURCE%/*}/colors.sh"
 # ============================================================
 
 # Parse parameters from ACTION,VAR1=val1,VAR2=val2 format
-FULL_PARAMS="$1"
-ACTION="${FULL_PARAMS%%,*}"
-PARAMS_REST="${FULL_PARAMS#*,}"
-
-if [[ -n "$PARAMS_REST" && "$PARAMS_REST" != "$FULL_PARAMS" ]]; then
-    while IFS='=' read -r key val; do
-        [[ -n "$key" ]] && export "$key=$val"
-    done <<< "${PARAMS_REST//,/$'\n'}"
-fi
+# Extracts ACTION and sets environment variables from key=value pairs
+# Usage in script: parse_parameters "$1"
+parse_parameters() {
+    local full_params="$1"
+    
+    # Extract action (first part before comma)
+    ACTION="${full_params%%,*}"
+    
+    # Extract remaining parameters
+    local params_rest="${full_params#*,}"
+    
+    # Parse key=value pairs and export as environment variables
+    if [[ -n "$params_rest" && "$params_rest" != "$full_params" ]]; then
+        while IFS='=' read -r key val; do
+            [[ -n "$key" ]] && export "$key=$val"
+        done <<< "${params_rest//,/$'\n'}"
+    fi
+}
 
 # ============================================================
 # LOGGING
@@ -134,19 +143,3 @@ is_os_family() {
             ;;
     esac
 }
-
-# Safe execution with error handling
-run_cmd() {
-    local cmd="$1"
-    local error_msg="${2:-Failed to run: $cmd}"
-    
-    if ! $cmd; then
-        log_error "$error_msg"
-    fi
-}
-
-# ============================================================
-# EXPORT BOOTSTRAP AS COMPLETE
-# ============================================================
-
-export BOOTSTRAP_LOADED=1
