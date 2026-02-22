@@ -1,18 +1,17 @@
 #!/bin/bash
 
 # openssh - Secure Shell remote access
-
-source "$(dirname "$0")/../lib/bootstrap.sh"
-
-parse_parameters "$1"
-detect_os
-
 # Install, update, uninstall, and configure OpenSSH on all Linux distributions
 
 set -e
 
 
 # Check if we need sudo
+if [[ $EUID -ne 0 ]]; then
+    SUDO_PREFIX="sudo"
+else
+    SUDO_PREFIX=""
+fi
 
 
 # Parse action from first parameter
@@ -25,6 +24,9 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # Log informational messages with green checkmark
+log_info() {
+    printf "${GREEN}✓${NC} %s\n" "$1"
+}
 
 # Log warning messages with yellow exclamation
 log_warn() {
@@ -32,6 +34,10 @@ log_warn() {
 }
 
 # Log error messages with red X and exit
+log_error() {
+    printf "${RED}✗${NC} %s\n" "$1"
+    exit 1
+}
 
 # Detect operating system and set appropriate package manager commands
 detect_os() {
@@ -74,11 +80,11 @@ install_openssh() {
     log_info "Installing openssh-server..."
     detect_os
     
-    $PKG_UPDATE || true
-    $PKG_INSTALL openssh-server || log_error "Failed"
+    $SUDO_PREFIX $PKG_UPDATE || true
+    $SUDO_PREFIX $PKG_INSTALL openssh-server || log_error "Failed"
     
     # Enable SSH service (handle both 'ssh' and 'sshd' service names)
-    systemctl enable ssh || systemctl enable sshd
+    $SUDO_PREFIX systemctl enable ssh || $SUDO_PREFIX systemctl enable sshd
     
     log_info "openssh-server installed and enabled!"
 }
@@ -88,8 +94,8 @@ update_openssh() {
     log_info "Updating openssh-server..."
     detect_os
     
-    $PKG_UPDATE || true
-    $PKG_INSTALL openssh-server || log_error "Failed"
+    $SUDO_PREFIX $PKG_UPDATE || true
+    $SUDO_PREFIX $PKG_INSTALL openssh-server || log_error "Failed"
     
     log_info "openssh-server updated!"
 }
@@ -100,8 +106,8 @@ uninstall_openssh() {
     detect_os
     
     # Disable SSH service (handle both 'ssh' and 'sshd' service names)
-    systemctl disable sshd || systemctl disable ssh
-    $PKG_UNINSTALL openssh-server || log_error "Failed"
+    $SUDO_PREFIX systemctl disable sshd || $SUDO_PREFIX systemctl disable ssh
+    $SUDO_PREFIX $PKG_UNINSTALL openssh-server || log_error "Failed"
     
     log_info "openssh-server uninstalled!"
 }
@@ -111,12 +117,12 @@ configure_openssh() {
     log_info "Configuring OpenSSH server (comprehensive configuration)..."
     
     # Ensure sshd_config.d directory exists
-    mkdir -p /etc/ssh/sshd_config.d || log_error "Failed to create /etc/ssh/sshd_config.d"
+    $SUDO_PREFIX mkdir -p /etc/ssh/sshd_config.d || log_error "Failed to create /etc/ssh/sshd_config.d"
     
     # Create backup of current config
     BACKUP_FILE="/etc/ssh/sshd_config.d/ulh.conf.backup.$(date +%s)"
     if [[ -f /etc/ssh/sshd_config.d/ulh.conf ]]; then
-        cp /etc/ssh/sshd_config.d/ulh.conf "$BACKUP_FILE" || log_warn "Failed to backup existing config"
+        $SUDO_PREFIX cp /etc/ssh/sshd_config.d/ulh.conf "$BACKUP_FILE" || log_warn "Failed to backup existing config"
         log_info "Backed up previous config to $BACKUP_FILE"
     fi
     
@@ -399,7 +405,7 @@ Subsystem sftp $SFTP_SUBSYSTEM
     echo "$CONFIG_CONTENT" > "$TEMP_CONFIG"
     
     # Copy to final location
-    cp "$TEMP_CONFIG" /etc/ssh/sshd_config.d/ulh.conf || log_error "Failed to write config to /etc/ssh/sshd_config.d/ulh.conf"
+    $SUDO_PREFIX cp "$TEMP_CONFIG" /etc/ssh/sshd_config.d/ulh.conf || log_error "Failed to write config to /etc/ssh/sshd_config.d/ulh.conf"
     
     # Cleanup temp file
     rm -f "$TEMP_CONFIG"
@@ -407,7 +413,7 @@ Subsystem sftp $SFTP_SUBSYSTEM
     log_info "Configuration written to /etc/ssh/sshd_config.d/ulh.conf"
     
     # Validate SSH configuration
-    if ! sshd -t 2>&1 | tee /tmp/sshd-validation.log; then
+    if ! $SUDO_PREFIX sshd -t 2>&1 | tee /tmp/sshd-validation.log; then
         log_error "SSH configuration validation failed. See /tmp/sshd-validation.log for details"
     fi
     
@@ -415,7 +421,7 @@ Subsystem sftp $SFTP_SUBSYSTEM
     
     # Restart SSH service
     log_info "Restarting SSH service..."
-    if systemctl restart sshd 2>/dev/null || systemctl restart ssh 2>/dev/null; then
+    if $SUDO_PREFIX systemctl restart sshd 2>/dev/null || $SUDO_PREFIX systemctl restart ssh 2>/dev/null; then
         log_info "SSH service restarted successfully"
     else
         log_error "Failed to restart SSH service"
@@ -429,16 +435,16 @@ fix_xauthority() {
     log_info "Fixing X11 Xauthority configuration..."
     
     # Create .Xauthority file if it doesn't exist
-    touch /root/.Xauthority
+    $SUDO_PREFIX touch /root/.Xauthority
     
     # Set proper ownership
-    chown root:root /root/.Xauthority
+    $SUDO_PREFIX chown root:root /root/.Xauthority
     
     # Set restrictive permissions (600 = rw-------)
-    chmod 600 /root/.Xauthority
+    $SUDO_PREFIX chmod 600 /root/.Xauthority
     
     # Generate trusted X11 authority for display :0
-    xauth generate :0 . trusted || log_warn "xauth generate completed with warnings"
+    $SUDO_PREFIX xauth generate :0 . trusted || log_warn "xauth generate completed with warnings"
     
     log_info "X11 Xauthority fixed successfully!"
 }

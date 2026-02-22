@@ -1,18 +1,17 @@
 #!/bin/bash
 
 # nodejs - Node.js JavaScript runtime and npm package manager
-
-source "$(dirname "$0")/../lib/bootstrap.sh"
-
-parse_parameters "$1"
-detect_os
-
 # Install, update, uninstall, and configure Node.js on all Linux distributions
 
 set -e
 
 
 # Check if we need sudo
+if [[ $EUID -ne 0 ]]; then
+    SUDO_PREFIX="sudo"
+else
+    SUDO_PREFIX=""
+fi
 
 
 # Parse action from first parameter
@@ -24,8 +23,15 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 # Log informational messages with green checkmark
+log_info() {
+    printf "${GREEN}✓${NC} %s\n" "$1"
+}
 
 # Log error messages with red X and exit
+log_error() {
+    printf "${RED}✗${NC} %s\n" "$1"
+    exit 1
+}
 
 # Detect operating system and set appropriate package manager commands
 detect_os() {
@@ -68,8 +74,8 @@ install_nodejs() {
     log_info "Installing Node.js..."
     detect_os
     
-    $PKG_UPDATE || true
-    $PKG_INSTALL nodejs npm || log_error "Failed"
+    $SUDO_PREFIX $PKG_UPDATE || true
+    $SUDO_PREFIX $PKG_INSTALL nodejs npm || log_error "Failed"
     
     log_info "Node.js installed!"
 }
@@ -79,8 +85,8 @@ update_nodejs() {
     log_info "Updating Node.js..."
     detect_os
     
-    $PKG_UPDATE || true
-    $PKG_INSTALL nodejs npm || log_error "Failed"
+    $SUDO_PREFIX $PKG_UPDATE || true
+    $SUDO_PREFIX $PKG_INSTALL nodejs npm || log_error "Failed"
     
     log_info "Node.js updated!"
 }
@@ -90,7 +96,7 @@ uninstall_nodejs() {
     log_info "Uninstalling Node.js..."
     detect_os
     
-    $PKG_UNINSTALL nodejs npm || log_error "Failed"
+    $SUDO_PREFIX $PKG_UNINSTALL nodejs npm || log_error "Failed"
     
     log_info "Node.js uninstalled!"
 }
