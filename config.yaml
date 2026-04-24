@@ -1250,6 +1250,14 @@ scripts:
     - name: config
       parameter: config
       description: Show AdGuard Home configuration info
+    - name: dns-check
+      parameter: dns-check
+      description: Trace hostname through all AGH DNS sources (hosts, rewrites, user_rules, live)
+      prompts:
+      - question: Hostname to trace? (e.g. ca.mein.lan)
+        variable: HOSTNAME
+        type: text
+        default: ''
   samba:
     description: Network file sharing with Samba/SMB
     category: Networking
